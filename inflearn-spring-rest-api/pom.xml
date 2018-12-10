@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.ninjasul</groupId>
-    <artifactId>inflearn-rest-api</artifactId>
+    <artifactId>inflearn-spring-rest-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>inflearn-rest-api</name>
+    <name>inflearn-spring-rest-api</name>
     <description>demo</description>
 
     <parent>
