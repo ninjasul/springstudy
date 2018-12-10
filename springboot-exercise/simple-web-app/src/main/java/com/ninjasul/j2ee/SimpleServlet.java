@@ -1,0 +1,24 @@
+package com.ninjasul.j2ee;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+/**
+ * Hello world!
+ *
+ */
+public class SimpleServlet extends HttpServlet
+{
+    protected void service(HttpServletRequest reqest, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        out.println("<html>");
+        out.println("<body>");
+        out.println("<h1>간단한 자바 웹 애플리케이션</h1>");
+        out.println("</body>");
+        out.println("</html>");
+    }
+}
