@@ -15,7 +15,7 @@ public class Event {
     private String name;
     private String description;
     private LocalDateTime beginEnrollmentDateTime;
-    private LocalDateTime cloaseEnrollementDateTime;
+    private LocalDateTime closeEnrollmentDateTime;
     private LocalDateTime beginEventDateTime;
     private LocalDateTime endEventDateTime;
     private String location;
