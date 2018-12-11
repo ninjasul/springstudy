@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,15 +15,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor @AllArgsConstructor
 public class EventDto {
 
-    private String name;
-    private String description;
-    private LocalDateTime beginEnrollmentDateTime;
-    private LocalDateTime closeEnrollmentDateTime;
-    private LocalDateTime beginEventDateTime;
-    private LocalDateTime endEventDateTime;
-    private String location;
-    private int basePrice;
-    private int maxPrice;
-    private int limitOfEnrollment;
+    private @NotEmpty String name;
 
+    private @NotEmpty String description;
+
+    private @NotNull LocalDateTime beginEnrollmentDateTime;
+
+    private @NotNull LocalDateTime closeEnrollmentDateTime;
+
+    private @NotNull LocalDateTime beginEventDateTime;
+
+    private @NotNull LocalDateTime endEventDateTime;
+
+    private String location;
+
+    private @Min(0) int basePrice;
+
+    private @Min(0) int maxPrice;
+
+    private @Min(0) int limitOfEnrollment;
 }
