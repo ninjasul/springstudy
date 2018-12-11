@@ -1,7 +1,6 @@
 package me.ninjasul.restapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.tomcat.jni.Local;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -18,9 +17,7 @@ import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
@@ -42,9 +39,9 @@ public class EventControllerTest {
                             .name("Spring")
                             .description("REST API Development with Spring")
                             .beginEnrollmentDateTime(LocalDateTime.of(2018, 12, 10, 18, 40))
-                            .closeEnrollmentDateTime(LocalDateTime.of( 2018, 12, 20, 18, 00 ))
-                            .beginEventDateTime(LocalDateTime.of(2018, 12, 25, 9, 00))
-                            .endEventDateTime(LocalDateTime.of( 2018, 12, 26, 18, 00))
+                            .closeEnrollmentDateTime(LocalDateTime.of( 2018, 12, 20, 18, 0))
+                            .beginEventDateTime(LocalDateTime.of(2018, 12, 25, 9, 0))
+                            .endEventDateTime(LocalDateTime.of( 2018, 12, 26, 18, 0))
                             .basePrice(100)
                             .maxPrice(200)
                             .limitOfEnrollment(100)
