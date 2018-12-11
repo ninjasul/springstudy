@@ -1,5 +1,6 @@
 package me.ninjasul.restapi.events;
 
+import com.google.common.base.Strings;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,4 +32,9 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
+
+    public void update() {
+        free = ( basePrice == 0 && maxPrice == 0 );
+        offline = ( location != null && !location.isBlank());
+    }
 }
