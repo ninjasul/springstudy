@@ -2,6 +2,7 @@ package me.ninjasul.restapi.events;
 
 import com.google.common.base.Strings;
 import lombok.*;
+import me.ninjasul.restapi.accounts.Account;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,6 +33,9 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
+
+    @ManyToOne
+    private Account manager;
 
     public void update() {
         free = ( basePrice == 0 && maxPrice == 0 );
