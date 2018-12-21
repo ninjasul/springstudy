@@ -1,7 +1,7 @@
 facebook :
     client :
-        clientId : 610379352727770
-        clientSecret: 60cde1daee2a79bc11d2b425d05105e8
+        clientId :
+        clientSecret:
         accessTokenUri: https://graph.facebook.com/oauth/access_token
         userAuthorizationUri: https://www.facebook.com/dialog/oauth?display=popup
         tokenName: oauth_token
@@ -13,8 +13,8 @@ facebook :
 
 google :
     client :
-        clientId : 285066490304-iaieeasdavlorjomui57iklfr68k8atj.apps.googleusercontent.com
-        clientSecret: ZXnzAjz41kGvJeX-GQ4Jmokm
+        clientId :
+        clientSecret:
         accessTokenUri: https://accounts.google.com/o/oauth2/token
         userAuthorizationUri: https://accounts.google.com/o/oauth2/auth
         scope: email, profile
