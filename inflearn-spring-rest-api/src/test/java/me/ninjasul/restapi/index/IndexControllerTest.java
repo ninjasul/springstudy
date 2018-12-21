@@ -1,5 +1,6 @@
 package me.ninjasul.restapi.index;
 
+import me.ninjasul.restapi.common.BaseControllerTest;
 import me.ninjasul.restapi.common.RestDocsConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,13 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Import(RestDocsConfiguration.class)
-@ActiveProfiles("test")
-public class IndexControllerTest {
+public class IndexControllerTest extends BaseControllerTest {
 
     @Autowired
     MockMvc mockMvc;
