@@ -10,11 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 public class RestApiApplication {
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(RestApiApplication.class, args);
     }
