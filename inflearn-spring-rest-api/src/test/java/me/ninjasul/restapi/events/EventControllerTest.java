@@ -1,5 +1,6 @@
 package me.ninjasul.restapi.events;
 
+import lombok.extern.log4j.Log4j2;
 import me.ninjasul.restapi.accounts.Account;
 import me.ninjasul.restapi.accounts.AccountRepository;
 import me.ninjasul.restapi.accounts.AccountRole;
@@ -13,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -33,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
+@Log4j2
 public class EventControllerTest extends BaseControllerTest {
 
     @Autowired
@@ -51,6 +55,35 @@ public class EventControllerTest extends BaseControllerTest {
     public void setUp() throws Exception {
         eventRepository.deleteAll();
         accountRepository.deleteAll();
+    }
+
+    @Test
+    @TestDescription("미인증 사용자가 이벤트를 생성하는 테스트")
+    public void createEventWithoutAuthentication() throws Exception {
+
+        // Given
+        EventDto eventDto = EventDto.builder()
+                .name("Spring")
+                .description("REST API Development with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2018, 12, 10, 18, 40))
+                .closeEnrollmentDateTime(LocalDateTime.of( 2018, 12, 20, 18, 0))
+                .beginEventDateTime(LocalDateTime.of(2018, 12, 25, 9, 0))
+                .endEventDateTime(LocalDateTime.of( 2018, 12, 26, 18, 0))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타텁 팩토리")
+                .build();
+
+        // When & Then
+        mockMvc.perform(post("/api/events/")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(eventDto)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+        ;
+
     }
 
     @Test
@@ -144,12 +177,7 @@ public class EventControllerTest extends BaseControllerTest {
 
     private String getAccessToken() throws Exception {
 
-        Account account = Account.builder()
-                .email(appProperties.getUserUsername())
-                .password(appProperties.getUserPassword())
-                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                .build();
-        accountService.saveAccount(account);
+        createUserAccount();
 
         ResultActions resultActions = mockMvc.perform(post("/oauth/token")
                 .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
@@ -159,7 +187,29 @@ public class EventControllerTest extends BaseControllerTest {
         );
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        log.info("responseBody: {}", responseBody);
+
         return new Jackson2JsonParser().parseMap(responseBody).get("access_token").toString();
+    }
+
+    private Account createUserAccount() {
+
+
+        Account account = Account.builder()
+                .email(appProperties.getUserUsername())
+                .password(appProperties.getUserPassword())
+                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+                .build();
+
+        return accountRepository.save(account);
+    }
+
+    private Optional<Account> getUserAccount(String username ) {
+        try {
+            return Optional.of((Account)accountService.loadUserByUsername(username));
+        } catch(UsernameNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     @Test
@@ -234,7 +284,7 @@ public class EventControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @TestDescription("이벤트를 30개 생성한 후 2번째 페이지 조회 테스트(한 페이지당 이벤트는 10개)")
+    @TestDescription("미인증 사용자가 이벤트를 30개 생성한 후 2번째 페이지 조회 테스트(한 페이지당 이벤트는 10개)")
     public void queryEvents() throws Exception {
         // Given
         IntStream.range(0, 30).forEach(this::generateEvent);
@@ -251,11 +301,35 @@ public class EventControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("page").exists())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
+                .andExpect(jsonPath("_links.create-event").doesNotExist())
         ;
     }
 
     @Test
-    @TestDescription("이벤트 하나를 조회하기")
+    @TestDescription("인증 사용자가 이벤트를 30개 생성한 후 2번째 페이지 조회 테스트(한 페이지당 이벤트는 10개)")
+    public void queryEventsWithAuthentication() throws Exception {
+        // Given
+        IntStream.range(0, 30).forEach(this::generateEvent);
+
+        // When & Then
+        mockMvc.perform(get("/api/events")
+                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
+                .param("size", "10")
+                .param("page", "1")
+                .param("sort", "name,DESC"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("_embedded.eventList[0].id").exists())
+                .andExpect(jsonPath("_embedded.eventList[0]._links.self").exists())
+                .andExpect(jsonPath("page").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andExpect(jsonPath("_links.create-event").exists())
+        ;
+    }
+
+    @Test
+    @TestDescription("미인증 사용자로 이벤트 하나를 조회하기")
     public void getEvent() throws Exception {
 
         // Given
@@ -267,7 +341,27 @@ public class EventControllerTest extends BaseControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("_links.self").exists())
                     .andExpect(jsonPath("_links.profile").exists())
+                    .andExpect(jsonPath("_links.update-event").doesNotExist())
                     .andDo(document("get-an-event"))
+        ;
+    }
+
+    @Test
+    @TestDescription("인증한 사용자로 이벤트 하나를 조회하기")
+    public void getEventWithAuthentication() throws Exception {
+
+        // Given
+        Event event = generateEvent(0);
+
+        // When & Then
+        mockMvc.perform(get("/api/events/{id}", event.getId())
+                .header(HttpHeaders.AUTHORIZATION, getBearerToken()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andExpect(jsonPath("_links.update-event").exists())
+                .andDo(document("get-an-event"))
         ;
     }
 
@@ -282,8 +376,8 @@ public class EventControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @TestDescription("이벤트를 정상적으로 수정하기")
-    public void updateEvent() throws Exception {
+    @TestDescription("미인증 사용자가 이벤트를 수정하기")
+    public void updateEventWithoutAuthentication() throws Exception {
 
         // Given
         Event event = generateEvent(200);
@@ -294,19 +388,41 @@ public class EventControllerTest extends BaseControllerTest {
 
         // When & Then
         mockMvc.perform(put("/api/events/{id}", event.getId())
-                        .header(HttpHeaders.AUTHORIZATION, getBearerToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDto)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+        ;
+    }
+
+    @Test
+    @TestDescription("인증 사용자가 이벤트를 정상적으로 수정하기")
+    public void updateEventWithAuthentication() throws Exception {
+
+        // Given
+        createUserAccount();
+        Event event = generateEvent(200, appProperties.getUserUsername() );
+
+        EventDto eventDto = modelMapper.map( event, EventDto.class );
+        String eventName = "Updated Event";
+        eventDto.setName(eventName);
+
+        // When & Then
+        mockMvc.perform(put("/api/events/{id}", event.getId())
+                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(eventDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(eventName))
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
+                .andDo(document("update-event"))
         ;
     }
 
     @Test
-    @TestDescription("입력데이터가 비어있는 경우 수정 실패")
+    @TestDescription("인증 사용자가 입력데이터가 비어있는 경우 수정 실패")
     public void updateEvent400_Empty() throws Exception {
 
         // Given
@@ -362,7 +478,11 @@ public class EventControllerTest extends BaseControllerTest {
         ;
     }
 
-    private Event generateEvent(int i) {
+    private Event generateEvent(int i ) {
+        return generateEvent( i, "");
+    }
+
+    private Event generateEvent(int i, String username ) {
         String formattedIndex = String.format("%02d", i);
         Event event = Event.builder()
                             .name("Event " + formattedIndex)
@@ -378,6 +498,7 @@ public class EventControllerTest extends BaseControllerTest {
                             .free(false)
                             .offline(true)
                             .eventStatus(EventStatus.DRAFT)
+                            .manager(StringUtils.isEmpty(username) ? null : (Account)accountService.loadUserByUsername(username))
                             .build();
 
         return eventRepository.save(event);
