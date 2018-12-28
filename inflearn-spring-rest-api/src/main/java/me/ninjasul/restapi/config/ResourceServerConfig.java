@@ -20,8 +20,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-          /*  .anonymous()
-                .and()*/
+            .anonymous()
+                .and()
             .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET, "/api/**")
                     .anonymous()

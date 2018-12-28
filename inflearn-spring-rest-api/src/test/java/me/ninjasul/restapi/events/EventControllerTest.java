@@ -4,6 +4,7 @@ import me.ninjasul.restapi.accounts.Account;
 import me.ninjasul.restapi.accounts.AccountRepository;
 import me.ninjasul.restapi.accounts.AccountRole;
 import me.ninjasul.restapi.accounts.AccountService;
+import me.ninjasul.restapi.common.AppProperties;
 import me.ninjasul.restapi.common.BaseControllerTest;
 import me.ninjasul.restapi.common.TestDescription;
 import org.junit.Before;
@@ -42,6 +43,9 @@ public class EventControllerTest extends BaseControllerTest {
 
     @Autowired
     AccountService accountService;
+
+    @Autowired
+    AppProperties appProperties;
 
     @Before
     public void setUp() throws Exception {
@@ -139,22 +143,18 @@ public class EventControllerTest extends BaseControllerTest {
     }
 
     private String getAccessToken() throws Exception {
-        String username = "ninjasul2@email.com";
-        String password = "ninjasul2";
+
         Account account = Account.builder()
-                .email(username)
-                .password(password)
+                .email(appProperties.getUserUsername())
+                .password(appProperties.getUserPassword())
                 .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
                 .build();
         accountService.saveAccount(account);
 
-        String clientId = "myApp";
-        String clientSecret = "pass";
-
         ResultActions resultActions = mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
-                .param("username", username)
-                .param("password", password)
+                .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+                .param("username", appProperties.getUserUsername())
+                .param("password", appProperties.getUserPassword())
                 .param("grant_type", "password")
         );
 

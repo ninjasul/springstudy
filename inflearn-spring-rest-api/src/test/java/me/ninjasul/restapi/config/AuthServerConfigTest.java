@@ -3,6 +3,7 @@ package me.ninjasul.restapi.config;
 import me.ninjasul.restapi.accounts.Account;
 import me.ninjasul.restapi.accounts.AccountRole;
 import me.ninjasul.restapi.accounts.AccountService;
+import me.ninjasul.restapi.common.AppProperties;
 import me.ninjasul.restapi.common.BaseControllerTest;
 import me.ninjasul.restapi.common.TestDescription;
 import org.junit.Test;
@@ -25,26 +26,17 @@ public class AuthServerConfigTest extends BaseControllerTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    AppProperties appProperties;
+
     @Test
     @TestDescription("액세스 토큰 발급 테스트")
     public void getAuthToken() throws Exception {
 
-        String username = "ninjasul2@email.com";
-        String password = "ninjasul2";
-        Account account = Account.builder()
-                                .email(username)
-                                .password(password)
-                                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                            .build();
-        accountService.saveAccount(account);
-
-        String clientId = "myApp";
-        String clientSecret = "pass";
-
         mockMvc.perform(post("/oauth/token")
-                        .with(httpBasic(clientId, clientSecret))
-                        .param("username", username)
-                        .param("password", password)
+                        .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+                        .param("username", appProperties.getUserUsername())
+                        .param("password", appProperties.getUserPassword())
                         .param("grant_type", "password")
                 )
                 .andDo(print())

@@ -3,6 +3,7 @@ package me.ninjasul.restapi.config;
 import me.ninjasul.restapi.accounts.Account;
 import me.ninjasul.restapi.accounts.AccountRole;
 import me.ninjasul.restapi.accounts.AccountService;
+import me.ninjasul.restapi.common.AppProperties;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -39,16 +40,27 @@ public class AppConfig {
             @Autowired
             AccountService accountService;
 
+            @Autowired
+            AppProperties appProperties;
+
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                Account account = Account.builder()
-                                .email("ninjasul@email.com")
-                                .password("ninjasul")
-                                .roles(Set.of(AccountRole.USER, AccountRole.ADMIN))
-                                .build()
-                ;
 
-                accountService.saveAccount(account);
+                Account admin = Account.builder()
+                                .email(appProperties.getAdminUsername())
+                                .password(appProperties.getAdminPassword())
+                                .roles(Set.of(AccountRole.USER, AccountRole.ADMIN))
+                                .build();
+
+                accountService.saveAccount(admin);
+
+                Account user = Account.builder()
+                        .email(appProperties.getUserUsername())
+                        .password(appProperties.getUserPassword())
+                        .roles(Set.of(AccountRole.USER))
+                        .build();
+
+                accountService.saveAccount(user);
             }
         };
     }
