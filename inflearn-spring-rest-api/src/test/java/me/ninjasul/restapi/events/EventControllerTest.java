@@ -177,7 +177,13 @@ public class EventControllerTest extends BaseControllerTest {
 
     private String getAccessToken() throws Exception {
 
-        createUserAccount();
+        Account account = Account.builder()
+                .email(appProperties.getUserUsername())
+                .password(appProperties.getUserPassword())
+                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+                .build();
+
+        accountService.saveAccount(account);
 
         ResultActions resultActions = mockMvc.perform(post("/oauth/token")
                 .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
@@ -190,26 +196,6 @@ public class EventControllerTest extends BaseControllerTest {
         log.info("responseBody: {}", responseBody);
 
         return new Jackson2JsonParser().parseMap(responseBody).get("access_token").toString();
-    }
-
-    private Account createUserAccount() {
-
-
-        Account account = Account.builder()
-                .email(appProperties.getUserUsername())
-                .password(appProperties.getUserPassword())
-                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                .build();
-
-        return accountRepository.save(account);
-    }
-
-    private Optional<Account> getUserAccount(String username ) {
-        try {
-            return Optional.of((Account)accountService.loadUserByUsername(username));
-        } catch(UsernameNotFoundException e) {
-            return Optional.empty();
-        }
     }
 
     @Test
@@ -392,32 +378,6 @@ public class EventControllerTest extends BaseControllerTest {
                         .content(objectMapper.writeValueAsString(eventDto)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
-        ;
-    }
-
-    @Test
-    @TestDescription("인증 사용자가 이벤트를 정상적으로 수정하기")
-    public void updateEventWithAuthentication() throws Exception {
-
-        // Given
-        createUserAccount();
-        Event event = generateEvent(200, appProperties.getUserUsername() );
-
-        EventDto eventDto = modelMapper.map( event, EventDto.class );
-        String eventName = "Updated Event";
-        eventDto.setName(eventName);
-
-        // When & Then
-        mockMvc.perform(put("/api/events/{id}", event.getId())
-                .header(HttpHeaders.AUTHORIZATION, getBearerToken())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(eventDto)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("name").value(eventName))
-                .andExpect(jsonPath("_links.self").exists())
-                .andExpect(jsonPath("_links.profile").exists())
-                .andDo(document("update-event"))
         ;
     }
 
