@@ -3,32 +3,31 @@ package com.ninjasul.unittesting.business;
 import com.ninjasul.unittesting.data.SomeDataService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SomeBusinessMockTest {
 
+    @InjectMocks
     SomeBusinessImpl someBusinessImpl;
-    SomeDataService someDataService;
 
-    @Before
-    public void setUp() {
-        someBusinessImpl = new SomeBusinessImpl();
-        someDataService = mock(SomeDataService.class);
-        someBusinessImpl.setSomeDataService(someDataService);
-    }
+    @Mock
+    SomeDataService someDataService;
 
     @Test
     public void caculateSumUsingDataService_Basic() {
 
         // Given & When
         when(someDataService.retrieveAllData()).thenReturn(new int [] { 1, 2, 3 });
-        int actualResult = someBusinessImpl.calculateSumUsingDataService();
 
         // Then
-        verify(someDataService, times(1)).retrieveAllData();
-        assertEquals( 6, actualResult );
+        assertEquals( 6, someBusinessImpl.calculateSumUsingDataService() );
     }
 
     @Test
@@ -36,11 +35,9 @@ public class SomeBusinessMockTest {
 
         // Given & When
         when(someDataService.retrieveAllData()).thenReturn(new int [] { 5 });
-        int actualResult = someBusinessImpl.calculateSumUsingDataService();
 
         // Then
-        verify(someDataService, times(1)).retrieveAllData();
-        assertEquals( 5, actualResult );
+        assertEquals( 5, someBusinessImpl.calculateSumUsingDataService());
     }
 
     @Test
@@ -48,11 +45,9 @@ public class SomeBusinessMockTest {
 
         // Given & When
         when(someDataService.retrieveAllData()).thenReturn(new int [] {});
-        int actualResult = someBusinessImpl.calculateSumUsingDataService();
 
         // Then
-        verify(someDataService, times(1)).retrieveAllData();
-        assertEquals( 0, actualResult );
+        assertEquals( 0, someBusinessImpl.calculateSumUsingDataService());
     }
 
     @Test
@@ -60,11 +55,9 @@ public class SomeBusinessMockTest {
 
         // Given & When
         when(someDataService.retrieveAllData()).thenReturn(null);
-        int actualResult = someBusinessImpl.calculateSumUsingDataService();
 
         // Then
-        verify(someDataService, times(1)).retrieveAllData();
-        assertEquals( 0, actualResult );
+        assertEquals( 0, someBusinessImpl.calculateSumUsingDataService());
 
     }
 }
