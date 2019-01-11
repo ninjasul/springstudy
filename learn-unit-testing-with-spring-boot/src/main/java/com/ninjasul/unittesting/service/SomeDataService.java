@@ -1,4 +1,4 @@
-package com.ninjasul.unittesting.data;
+package com.ninjasul.unittesting.service;
 
 public interface SomeDataService {
     int [] retrieveAllData();

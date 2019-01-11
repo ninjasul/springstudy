@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class ItemController {
 
@@ -14,11 +16,21 @@ public class ItemController {
 
     @GetMapping("/dummy-item")
     public Item dummyItem() {
-        return new Item( 1, "Ball", 10, 100 );
+        return Item.builder()
+                    .id(1)
+                    .name("Ball")
+                    .price(10)
+                    .quantity(100)
+                .build();
     }
 
     @GetMapping("/item-from-service")
-    public Item itemFromService() {
+    public Item retrieveItemFromService() {
         return itemService.retrieveHardCodedItem();
+    }
+
+    @GetMapping("/all-items-from-database")
+    public List<Item> retrieveAllItems() {
+        return itemService.retrieveAllItems();
     }
 }

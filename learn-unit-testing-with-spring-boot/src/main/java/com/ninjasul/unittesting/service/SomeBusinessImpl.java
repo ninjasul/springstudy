@@ -1,6 +1,5 @@
 package com.ninjasul.unittesting.service;
 
-import com.ninjasul.unittesting.data.SomeDataService;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
