@@ -1,10 +1,7 @@
-package com.ninjasul.unittesting.business;
+package com.ninjasul.unittesting.service;
 
 import com.ninjasul.unittesting.data.SomeDataService;
 import lombok.extern.log4j.Log4j2;
-
-import java.util.Optional;
-import java.util.stream.IntStream;
 
 @Log4j2
 public class SomeBusinessImpl {

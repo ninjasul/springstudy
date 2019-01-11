@@ -1,4 +1,4 @@
-package com.ninjasul.unittesting.business;
+package com.ninjasul.unittesting.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;

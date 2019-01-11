@@ -1,4 +1,4 @@
-package com.ninjasul.unittesting.business;
+package com.ninjasul.unittesting.service;
 
 import org.junit.Before;
 import org.junit.Test;
