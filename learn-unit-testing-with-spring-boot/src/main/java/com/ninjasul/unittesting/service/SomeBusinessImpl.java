@@ -2,6 +2,10 @@ package com.ninjasul.unittesting.service;
 
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.OptionalInt;
+
 @Log4j2
 public class SomeBusinessImpl {
 
@@ -20,16 +24,6 @@ public class SomeBusinessImpl {
     }
 
     private int getSumOfData(int[] data) {
-        int result = 0;
-        if( data == null ) {
-            data = new int[0];
-        }
-
-        for( int num : data ) {
-            result += num;
-        }
-
-        log.info( "result : {}", result );
-        return result;
+       return Arrays.stream(data).reduce(Integer::sum).orElse(0);
     }
 }
