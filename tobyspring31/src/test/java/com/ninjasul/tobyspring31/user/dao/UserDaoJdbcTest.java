@@ -79,7 +79,7 @@ public class UserDaoJdbcTest {
     @Test
     public void update() throws SQLException {
 
-        //dao.deleteAll();
+        dao.deleteAll();
 
         dao.add(user1);
 

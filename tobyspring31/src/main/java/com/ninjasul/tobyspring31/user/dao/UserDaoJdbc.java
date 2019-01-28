@@ -30,7 +30,7 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public void add(User user) {
         jdbcTemplate.update("INSERT INTO USERS( ID, NAME, PASSWORD, LEVEL, LOGINCOUNT, RECOMMENDATIONCOUNT ) " +
-                        "           value ( ?, ?, ?, ?, ?, ?)",
+                        "           VALUES ( ?, ?, ?, ?, ?, ?)",
                                 user.getId(),
                                 user.getName(),
                                 user.getPassword(),

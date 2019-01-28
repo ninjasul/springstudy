@@ -15,7 +15,7 @@ public enum Level {
     }
 
     public static Level valueOf(int value) {
-        if( value < 0 || value > userLevelList.size()-1 )
+        if( value <= 0 || value > userLevelList.size() )
             throw new AssertionError("Unknown value: " + value);
 
         return userLevelList.get(value-1);
