@@ -26,9 +26,6 @@ import static org.junit.Assert.assertThat;
 public class UserDaoJdbcTest {
 
     @Autowired
-    private ApplicationContext context;
-
-    @Autowired
     @Qualifier("userDaoJdbc")
     private UserDao dao;
 
@@ -71,17 +68,13 @@ public class UserDaoJdbcTest {
     }
 
 
-
-    /**
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     */
     @Test
-    public void update() throws SQLException {
+    public void update() {
 
         dao.deleteAll();
 
-        dao.add(user1);
+        dao.add(user1);     // 수정할 사용자
+        dao.add(user2);     // 수정하지 않을 사용자
 
         user1.setName("오민규");
         user1.setPassword("springno6");
@@ -90,12 +83,15 @@ public class UserDaoJdbcTest {
         user1.setRecommendationCount(999);
         dao.update(user1);
 
-        User user1Update = dao.get(user1.getId());
-        checkSameUser( user1, user1Update );
+        User updatedUser1 = dao.get(user1.getId());
+        checkSameUser( user1, updatedUser1 );
+
+        User selectedUser2 = dao.get(user2.getId());
+        checkSameUser( user2, selectedUser2 );
     }
 
     @Test
-    public void count() throws SQLException {
+    public void count() {
 
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
@@ -109,7 +105,7 @@ public class UserDaoJdbcTest {
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
-    public void getUserFailure() throws SQLException {
+    public void getUserFailure() {
 
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
@@ -152,8 +148,8 @@ public class UserDaoJdbcTest {
         assertThat(user1.getLoginCount(), is(user2.getLoginCount()));
         assertThat(user1.getRecommendationCount(), is(user2.getRecommendationCount()));
     }
-
-    /*@Test
+/*
+    @Test
     public void duplicateKey() {
         dao.deleteAll();
 
@@ -163,6 +159,7 @@ public class UserDaoJdbcTest {
         } catch (DuplicateKeyException e) {
             SQLException sqlEx = (SQLException) e.getRootCause();
             SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
+
             assertThat(set.translate(null, null, sqlEx), is(DuplicateKeyException.class));
 
         }

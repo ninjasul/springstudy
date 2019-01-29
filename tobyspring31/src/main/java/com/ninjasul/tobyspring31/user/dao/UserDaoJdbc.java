@@ -42,6 +42,22 @@ public class UserDaoJdbc implements UserDao {
     }
 
     @Override
+    public void addList(List<User> users) {
+
+        for( User user : users ) {
+            jdbcTemplate.update("INSERT INTO USERS( ID, NAME, PASSWORD, LEVEL, LOGINCOUNT, RECOMMENDATIONCOUNT ) " +
+                            "           VALUES ( ?, ?, ?, ?, ?, ?)",
+                    user.getId(),
+                    user.getName(),
+                    user.getPassword(),
+                    user.getLevel().intValue(),
+                    user.getLoginCount(),
+                    user.getRecommendationCount()
+            );
+        }
+    }
+
+    @Override
     public void update(User user) {
         jdbcTemplate.update("UPDATE USERS SET NAME = ?, PASSWORD = ?, LEVEL = ?, LOGINCOUNT = ?, RECOMMENDATIONCOUNT = ? WHERE ID = ?",
                 user.getName(),
