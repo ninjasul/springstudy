@@ -3,31 +3,66 @@ package com.ninjasul.tobyspring31.user.service;
 import com.ninjasul.tobyspring31.user.dao.UserDao;
 import com.ninjasul.tobyspring31.user.domain.User;
 import com.ninjasul.tobyspring31.user.policy.upgrade.UserLevelUpgradePolicy;
+import lombok.Setter;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.List;
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserDao userDao;
+    @Setter
+    protected UserDao userDao;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    @Setter
+    protected ApplicationContext applicationContext;
 
-    public void upgradeLevels() {
-        List<User> users = userDao.getAll();
+    @Autowired
+    @Setter
+    protected DataSource dataSource;
 
-        for( User user : users ) {
-            if( canUpgradeLevel(user) ) {
-                user.setLevel(user.getLevel().nextLevel());
-                userDao.update(user);
+    public void upgradeLevels() throws Exception {
+
+        Connection connection = beginTransaction(dataSource);
+
+        try {
+            List<User> users = userDao.getAll();
+
+            for (User user : users) {
+                if (canUpgradeLevel(user)) {
+                    upgradeLevel(user);
+                }
             }
+
+            connection.commit();
+        } catch (Exception e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            endTransaction(connection);
         }
+    }
+
+    private Connection beginTransaction(DataSource dataSource) throws Exception {
+        TransactionSynchronizationManager.initSynchronization();
+        Connection connection = DataSourceUtils.getConnection(dataSource);
+        connection.setAutoCommit(false);
+        return connection;
+    }
+
+    private void endTransaction(Connection connection) {
+        DataSourceUtils.releaseConnection(connection, dataSource);
+        TransactionSynchronizationManager.unbindResource(dataSource);
+        TransactionSynchronizationManager.clearSynchronization();
     }
 
     boolean canUpgradeLevel(User user) {
@@ -44,5 +79,10 @@ public class UserService {
         }
 
         return canUpgradeLevel;
+    }
+
+    protected void upgradeLevel(User user) {
+        user.setLevel(user.getLevel().nextLevel());
+        userDao.update(user);
     }
 }

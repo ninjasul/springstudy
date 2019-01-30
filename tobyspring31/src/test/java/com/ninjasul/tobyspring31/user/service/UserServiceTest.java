@@ -3,24 +3,29 @@ package com.ninjasul.tobyspring31.user.service;
 import com.ninjasul.tobyspring31.user.dao.UserDao;
 import com.ninjasul.tobyspring31.user.domain.Level;
 import com.ninjasul.tobyspring31.user.domain.User;
+import lombok.extern.log4j.Log4j2;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.ninjasul.tobyspring31.user.policy.upgrade.BasicUpgradePolicy.MIN_LOGIN_COUNT_TO_UPGRADE;
 import static com.ninjasul.tobyspring31.user.policy.upgrade.SilverUpgradePolicy.MIN_RECOMMENDATION_COUNT_TO_UPGRADE;
+import static org.assertj.core.api.Assertions.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Log4j2
 public class UserServiceTest {
 
     @Autowired
@@ -28,6 +33,12 @@ public class UserServiceTest {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private DataSource dataSource;
 
     private List<User> users;
 
@@ -88,10 +99,9 @@ public class UserServiceTest {
 
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
 
-        userDao.deleteAll();
-        userDao.addList(users);
+        recreateUserList();
 
         userService.upgradeLevels();
 
@@ -107,12 +117,40 @@ public class UserServiceTest {
         User selectedUser = userDao.get(user.getId());
 
         if( upgraded ) {
-            assertEquals(selectedUser.getLevel(), user.getLevel().nextLevel());
+            assertEquals(user.getLevel().nextLevel(), selectedUser.getLevel());
         }
         else {
-            assertEquals(selectedUser.getLevel(), user.getLevel());
+            assertEquals(user.getLevel(), selectedUser.getLevel());
         }
     }
 
+    @Test
+    public void upgradeAllOrNothing() {
 
+        UserService testUserService = createTestUserService(users.get(3).getId());
+        recreateUserList();
+
+        try {
+           testUserService.upgradeLevels();
+           fail("TestUserServiceException expected");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        checkLevelUpgraded( users.get(1), false );
+    }
+
+    private UserService createTestUserService(String id) {
+        UserService testUserService = new TestUserService(id);
+        testUserService.setUserDao(userDao);
+        testUserService.setApplicationContext(applicationContext);
+        testUserService.setDataSource(dataSource);
+        return testUserService;
+    }
+
+    private void recreateUserList() {
+        userDao.deleteAll();
+        userDao.addList(users);
+    }
 }
