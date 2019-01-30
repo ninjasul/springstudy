@@ -7,12 +7,11 @@ import lombok.Setter;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.List;
 
 @Service
@@ -28,11 +27,11 @@ public class UserService {
 
     @Autowired
     @Setter
-    protected DataSource dataSource;
+    protected PlatformTransactionManager transactionManager;
 
     public void upgradeLevels() throws Exception {
 
-        Connection connection = beginTransaction(dataSource);
+        TransactionStatus status = beginTransaction();
 
         try {
             List<User> users = userDao.getAll();
@@ -43,26 +42,15 @@ public class UserService {
                 }
             }
 
-            connection.commit();
+            transactionManager.commit(status);
         } catch (Exception e) {
-            connection.rollback();
+            transactionManager.rollback(status);
             throw e;
-        } finally {
-            endTransaction(connection);
         }
     }
 
-    private Connection beginTransaction(DataSource dataSource) throws Exception {
-        TransactionSynchronizationManager.initSynchronization();
-        Connection connection = DataSourceUtils.getConnection(dataSource);
-        connection.setAutoCommit(false);
-        return connection;
-    }
-
-    private void endTransaction(Connection connection) {
-        DataSourceUtils.releaseConnection(connection, dataSource);
-        TransactionSynchronizationManager.unbindResource(dataSource);
-        TransactionSynchronizationManager.clearSynchronization();
+    private TransactionStatus beginTransaction() throws Exception {
+        return transactionManager.getTransaction(new DefaultTransactionDefinition());
     }
 
     boolean canUpgradeLevel(User user) {

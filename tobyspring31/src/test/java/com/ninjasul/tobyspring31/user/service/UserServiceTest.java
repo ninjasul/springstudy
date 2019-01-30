@@ -4,13 +4,16 @@ import com.ninjasul.tobyspring31.user.dao.UserDao;
 import com.ninjasul.tobyspring31.user.domain.Level;
 import com.ninjasul.tobyspring31.user.domain.User;
 import lombok.extern.log4j.Log4j2;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -38,7 +41,7 @@ public class UserServiceTest {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private DataSource dataSource;
+    private PlatformTransactionManager transactionManager;
 
     private List<User> users;
 
@@ -127,7 +130,7 @@ public class UserServiceTest {
     @Test
     public void upgradeAllOrNothing() {
 
-        UserService testUserService = createTestUserService(users.get(3).getId());
+        UserService testUserService = getTestUserService(users.get(3).getId());
         recreateUserList();
 
         try {
@@ -141,16 +144,21 @@ public class UserServiceTest {
         checkLevelUpgraded( users.get(1), false );
     }
 
-    private UserService createTestUserService(String id) {
+    private UserService getTestUserService(String id) {
         UserService testUserService = new TestUserService(id);
         testUserService.setUserDao(userDao);
         testUserService.setApplicationContext(applicationContext);
-        testUserService.setDataSource(dataSource);
+        testUserService.setTransactionManager(transactionManager);
         return testUserService;
     }
 
     private void recreateUserList() {
         userDao.deleteAll();
         userDao.addList(users);
+    }
+
+    @Test
+    public void defaultTransactionManagerType() {
+        assertThat( transactionManager, IsInstanceOf.instanceOf(DataSourceTransactionManager.class));
     }
 }
