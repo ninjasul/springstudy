@@ -8,19 +8,15 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 public class UserServiceTest {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Autowired
     private UserDao userDao;
@@ -110,6 +106,24 @@ public class UserServiceTest {
 
 
     @Test
+    public void add() {
+        userDao.deleteAll();
+
+        User userWithLevel = users.get(4);
+        User userWithoutLevel = users.get(0);
+        userWithoutLevel.setLevel(null);
+
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
+
+        User userWithLevelSelected = userDao.get(userWithLevel.getId());
+        User userWithoutLevelSelected = userDao.get(userWithoutLevel.getId());
+
+        assertEquals( userWithLevel.getLevel(), userWithLevelSelected.getLevel() );
+        assertEquals( Level.BASIC, userWithoutLevelSelected.getLevel());
+    }
+
+    @Test
     public void upgradeLevels() throws Exception {
 
         recreateUserList();
@@ -155,11 +169,13 @@ public class UserServiceTest {
     @Test
     public void upgradeAllOrNothing() {
 
-        UserService testUserService = getTestUserService(users.get(3).getId());
+        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
+        UserServiceTx userServiceTx = getUserServiceTx();
+
         recreateUserList();
 
         try {
-           testUserService.upgradeLevels();
+            userServiceTx.upgradeLevels();
            fail("TestUserServiceException expected");
         }
         catch (Exception e) {
@@ -169,13 +185,18 @@ public class UserServiceTest {
         checkLevelUpgraded( users.get(1), false );
     }
 
-    private UserService getTestUserService(String id) {
-        UserService testUserService = new TestUserService(id);
+    private UserServiceImpl getTestUserService(String id) {
+        UserServiceImpl testUserService = new TestUserService(id);
         testUserService.setUserDao(userDao);
         testUserService.setApplicationContext(applicationContext);
-        testUserService.setTransactionManager(transactionManager);
         testUserService.setMailSender(mailSender);
         return testUserService;
+    }
+
+    private UserServiceTx getUserServiceTx() {
+        UserServiceTx userServiceTx = new UserServiceTx();
+        userServiceTx.setTransactionManager(transactionManager);
+        return userServiceTx;
     }
 
     private void recreateUserList() {

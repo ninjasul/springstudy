@@ -2,7 +2,7 @@ package com.ninjasul.tobyspring31.user.service;
 
 import com.ninjasul.tobyspring31.user.domain.User;
 
-public class TestUserService extends UserService {
+public class TestUserService extends UserServiceImpl {
 
     private String id;
 
