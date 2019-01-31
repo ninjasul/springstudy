@@ -49,8 +49,7 @@ public class UserServiceTest {
     private PlatformTransactionManager transactionManager;
 
     @Autowired
-    //@Qualifier("mailSender")
-    private JavaMailSender mailSender;
+    private MailSender mailSender;
 
     private List<User> users;
 
