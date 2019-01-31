@@ -8,10 +8,15 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -42,6 +47,10 @@ public class UserServiceTest {
 
     @Autowired
     private PlatformTransactionManager transactionManager;
+
+    @Autowired
+    //@Qualifier("mailSender")
+    private JavaMailSender mailSender;
 
     private List<User> users;
 
@@ -106,6 +115,8 @@ public class UserServiceTest {
 
         recreateUserList();
 
+        MockMailSender mockMailSender = getMockMailSender();
+
         userService.upgradeLevels();
 
         checkLevelUpgraded( users.get(0), false );
@@ -113,6 +124,21 @@ public class UserServiceTest {
         checkLevelUpgraded( users.get(2), false );
         checkLevelUpgraded( users.get(3), true );
         checkLevelUpgraded( users.get(4), false );
+
+        checkMailReceivers(mockMailSender);
+    }
+
+    private MockMailSender getMockMailSender() {
+        MockMailSender mockMailSender = new MockMailSender();
+        userService.setMailSender(mockMailSender);
+        return mockMailSender;
+    }
+
+    private void checkMailReceivers(MockMailSender mockMailSender) {
+        List<String> request = mockMailSender.getRequests();
+        assertEquals( request.size(), 2 );
+        assertEquals( request.get(0), users.get(1).getEmail());
+        assertEquals( request.get(1), users.get(3).getEmail());
     }
 
     private void checkLevelUpgraded(User user, boolean upgraded) {
@@ -149,6 +175,7 @@ public class UserServiceTest {
         testUserService.setUserDao(userDao);
         testUserService.setApplicationContext(applicationContext);
         testUserService.setTransactionManager(transactionManager);
+        testUserService.setMailSender(mailSender);
         return testUserService;
     }
 
@@ -160,5 +187,10 @@ public class UserServiceTest {
     @Test
     public void defaultTransactionManagerType() {
         assertThat( transactionManager, IsInstanceOf.instanceOf(DataSourceTransactionManager.class));
+    }
+
+    @Test
+    public void defaultMailSenderType() {
+        assertThat( mailSender, IsInstanceOf.instanceOf(JavaMailSenderImpl.class));
     }
 }

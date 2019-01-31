@@ -6,7 +6,12 @@ import com.ninjasul.tobyspring31.user.policy.upgrade.UserLevelUpgradePolicy;
 import lombok.Setter;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -28,6 +33,10 @@ public class UserService {
     @Autowired
     @Setter
     protected PlatformTransactionManager transactionManager;
+
+    @Autowired
+    @Setter
+    protected MailSender mailSender;
 
     public void upgradeLevels() throws Exception {
 
@@ -72,5 +81,16 @@ public class UserService {
     protected void upgradeLevel(User user) {
         user.setLevel(user.getLevel().nextLevel());
         userDao.update(user);
+        sendUpgradeEmail(user);
+    }
+
+    private void sendUpgradeEmail(User user) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("useradmin@ksug.org");
+        mailMessage.setSubject("Upgrade 안내");
+        mailMessage.setText("사용자님의 등급이 " + user.getLevel().name());
+
+        mailSender.send(mailMessage);
     }
 }
