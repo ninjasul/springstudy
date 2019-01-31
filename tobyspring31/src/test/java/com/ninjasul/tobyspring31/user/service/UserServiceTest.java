@@ -10,12 +10,14 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -28,6 +30,8 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,7 +50,7 @@ public class UserServiceTest {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    @Autowired
+    @MockBean
     private MailSender mailSender;
 
     private List<User> users;
@@ -149,13 +153,6 @@ public class UserServiceTest {
         return mockMailSender;
     }
 
-    private void checkMailReceivers(MockMailSender mockMailSender) {
-        List<String> request = mockMailSender.getRequests();
-        assertEquals( request.size(), 2 );
-        assertEquals( request.get(0), users.get(1).getEmail());
-        assertEquals( request.get(1), users.get(3).getEmail());
-    }
-
     private void checkLevelUpgraded(User user, boolean upgraded) {
 
         User selectedUser = userDao.get(user.getId());
@@ -166,6 +163,40 @@ public class UserServiceTest {
         else {
             assertEquals(user.getLevel(), selectedUser.getLevel());
         }
+    }
+
+    private void checkMailReceivers(MockMailSender mockMailSender) {
+        List<String> request = mockMailSender.getRequests();
+        assertEquals( request.size(), 2 );
+        assertEquals( request.get(0), users.get(1).getEmail());
+        assertEquals( request.get(1), users.get(3).getEmail());
+    }
+
+    @Test
+    public void upgradeLevelsWithMockBean() throws Exception {
+
+        recreateUserList();
+
+        userService.setMailSender(mailSender);
+        userService.upgradeLevels();
+
+        checkLevelUpgraded( users.get(0), false );
+        checkLevelUpgraded( users.get(1), true );
+        checkLevelUpgraded( users.get(2), false );
+        checkLevelUpgraded( users.get(3), true );
+        checkLevelUpgraded( users.get(4), false );
+
+        checkMailSenderWithMockBean();
+    }
+
+    private void checkMailSenderWithMockBean() {
+        ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+
+        verify(mailSender, times(2)).send(mailMessageArgumentCaptor.capture());
+
+        List<SimpleMailMessage> mailMessages = mailMessageArgumentCaptor.getAllValues();
+        assertEquals( users.get(1).getEmail(), mailMessages.get(0).getTo()[0] );
+        assertEquals( users.get(3).getEmail(), mailMessages.get(1).getTo()[0] );
     }
 
     @Test
@@ -209,10 +240,5 @@ public class UserServiceTest {
     @Test
     public void defaultTransactionManagerType() {
         assertThat( transactionManager, IsInstanceOf.instanceOf(DataSourceTransactionManager.class));
-    }
-
-    @Test
-    public void defaultMailSenderType() {
-        assertThat( mailSender, IsInstanceOf.instanceOf(JavaMailSenderImpl.class));
     }
 }
