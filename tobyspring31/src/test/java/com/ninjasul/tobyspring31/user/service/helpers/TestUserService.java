@@ -1,6 +1,7 @@
-package com.ninjasul.tobyspring31.user.service;
+package com.ninjasul.tobyspring31.user.service.helpers;
 
 import com.ninjasul.tobyspring31.user.domain.User;
+import com.ninjasul.tobyspring31.user.service.UserServiceImpl;
 
 public class TestUserService extends UserServiceImpl {
 

@@ -1,4 +1,4 @@
-package com.ninjasul.tobyspring31.user.service;
+package com.ninjasul.tobyspring31.user.service.helpers;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.MailException;

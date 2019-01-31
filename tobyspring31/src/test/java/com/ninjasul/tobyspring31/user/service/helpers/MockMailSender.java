@@ -1,4 +1,4 @@
-package com.ninjasul.tobyspring31.user.service;
+package com.ninjasul.tobyspring31.user.service.helpers;
 
 import lombok.Getter;
 import org.springframework.mail.MailException;

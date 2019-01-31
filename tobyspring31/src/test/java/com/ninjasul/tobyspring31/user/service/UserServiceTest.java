@@ -3,6 +3,8 @@ package com.ninjasul.tobyspring31.user.service;
 import com.ninjasul.tobyspring31.user.dao.UserDao;
 import com.ninjasul.tobyspring31.user.domain.Level;
 import com.ninjasul.tobyspring31.user.domain.User;
+import com.ninjasul.tobyspring31.user.service.helpers.MockMailSender;
+import com.ninjasul.tobyspring31.user.service.helpers.TestUserService;
 import lombok.extern.log4j.Log4j2;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
