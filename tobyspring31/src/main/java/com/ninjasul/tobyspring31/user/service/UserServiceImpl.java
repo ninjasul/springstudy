@@ -7,8 +7,8 @@ import com.ninjasul.tobyspring31.user.policy.upgrade.UserLevelUpgradePolicy;
 import lombok.Setter;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Primary;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Primary
+@Qualifier("userServiceTarget")
 public class UserServiceImpl implements UserService {
 
     @Autowired

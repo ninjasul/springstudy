@@ -10,18 +10,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Setter
 public class TransactionHandler implements InvocationHandler {
 
-    @Setter
     Object target;
 
-    @Autowired
-    @Setter
     protected PlatformTransactionManager transactionManager;
 
-    @Setter
     private String pattern;
-
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

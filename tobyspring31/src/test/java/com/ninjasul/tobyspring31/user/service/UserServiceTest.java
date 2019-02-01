@@ -12,12 +12,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -40,6 +42,7 @@ import static org.mockito.Mockito.verify;
 public class UserServiceTest {
 
     @Autowired
+    @Qualifier("userServiceTarget")
     private UserServiceImpl userService;
 
     @Autowired
@@ -256,6 +259,28 @@ public class UserServiceTest {
                 new Class[]{UserService.class},
                 transactionHandler
         );
+    }
+
+    @Test
+    @DirtiesContext
+    public void upgradeAllOrNothingWithProxiedFactoryBean() throws Exception {
+
+        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
+        TxProxyFactoryBean txProxyFactoryBean = applicationContext.getBean("&userService", TxProxyFactoryBean.class );
+        txProxyFactoryBean.setTarget(testUserService);
+
+        UserService txUserService = (UserService)txProxyFactoryBean.getObject();
+
+        recreateUserList();
+
+        try {
+            txUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        checkLevelUpgraded(users.get(1), false);
     }
 
     private UserServiceImpl getTestUserService(String id) {
