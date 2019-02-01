@@ -1,5 +1,7 @@
-package com.ninjasul.tobyspring31.user.config;
+package com.ninjasul.tobyspring31.config;
 
+import com.ninjasul.tobyspring31.factorybean.Message;
+import com.ninjasul.tobyspring31.factorybean.MessageFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.MailSender;
@@ -15,5 +17,17 @@ public class AppConfig {
         javaMailSender.setHost("127.0.0.1");
         javaMailSender.setPort(25);
         return javaMailSender;
+    }
+
+    @Bean(name="message")
+    public MessageFactoryBean messageFactoryBean() {
+        MessageFactoryBean messageFactoryBean = new MessageFactoryBean();
+        messageFactoryBean.setText("Factory Bean");
+        return messageFactoryBean;
+    }
+
+    @Bean
+    public Message message() throws Exception {
+        return messageFactoryBean().getObject();
     }
 }
