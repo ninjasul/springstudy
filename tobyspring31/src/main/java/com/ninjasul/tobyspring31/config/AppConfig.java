@@ -21,9 +21,7 @@ public class AppConfig {
 
     @Bean(name="message")
     public MessageFactoryBean messageFactoryBean() {
-        MessageFactoryBean messageFactoryBean = new MessageFactoryBean();
-        messageFactoryBean.setText("Factory Bean");
-        return messageFactoryBean;
+        return new MessageFactoryBean();
     }
 
     @Bean

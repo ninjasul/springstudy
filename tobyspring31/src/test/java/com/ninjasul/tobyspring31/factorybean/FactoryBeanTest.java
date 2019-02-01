@@ -1,19 +1,16 @@
 package com.ninjasul.tobyspring31.factorybean;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,7 +27,7 @@ public class FactoryBeanTest {
     private ApplicationContext context;
 
     @Test
-    public void getMessage() {
+    public void getMessageFromAutowiredBeans() {
         assertEquals(message.getClass(), Message.class);
         assertEquals(messageFactoryBean.getClass(), MessageFactoryBean.class);
 
@@ -40,7 +37,7 @@ public class FactoryBeanTest {
 
 
     @Test
-    public void getMessageFromApplicationContext() {
+    public void getMessageFromApplicationContextBeans() {
         Object messageFromContext = context.getBean("message");
         Object messageFactoryBeanFromContext = context.getBean("&message");
 
