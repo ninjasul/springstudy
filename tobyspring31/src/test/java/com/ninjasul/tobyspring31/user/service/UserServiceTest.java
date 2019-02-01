@@ -21,6 +21,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,55 +60,55 @@ public class UserServiceTest {
     public void setUp() throws Exception {
         users = Arrays.asList(
                 User.builder()
-                    .id("bumjin")
-                    .name("박범진")
-                    .password("p1")
-                    .level(Level.BASIC)
-                    .loginCount(MIN_LOGIN_COUNT_TO_UPGRADE-1)
-                    .recommendationCount(0)
-                    .build(),
+                        .id("bumjin")
+                        .name("박범진")
+                        .password("p1")
+                        .level(Level.BASIC)
+                        .loginCount(MIN_LOGIN_COUNT_TO_UPGRADE - 1)
+                        .recommendationCount(0)
+                        .build(),
 
                 User.builder()
-                    .id("joytouch")
-                    .name("강명성")
-                    .password("p2")
-                    .level(Level.BASIC)
-                    .loginCount(MIN_LOGIN_COUNT_TO_UPGRADE)
-                    .recommendationCount(0)
-                    .build(),
+                        .id("joytouch")
+                        .name("강명성")
+                        .password("p2")
+                        .level(Level.BASIC)
+                        .loginCount(MIN_LOGIN_COUNT_TO_UPGRADE)
+                        .recommendationCount(0)
+                        .build(),
 
                 User.builder()
-                    .id("erwins")
-                    .name("신승한")
-                    .password("p3")
-                    .level(Level.SILVER)
-                    .loginCount(60)
-                    .recommendationCount(MIN_RECOMMENDATION_COUNT_TO_UPGRADE-1)
-                    .build(),
+                        .id("erwins")
+                        .name("신승한")
+                        .password("p3")
+                        .level(Level.SILVER)
+                        .loginCount(60)
+                        .recommendationCount(MIN_RECOMMENDATION_COUNT_TO_UPGRADE - 1)
+                        .build(),
 
                 User.builder()
-                    .id("madnite1")
-                    .name("이상호")
-                    .password("p4")
-                    .level(Level.SILVER)
-                    .loginCount(60)
-                    .recommendationCount(MIN_RECOMMENDATION_COUNT_TO_UPGRADE)
-                    .build(),
+                        .id("madnite1")
+                        .name("이상호")
+                        .password("p4")
+                        .level(Level.SILVER)
+                        .loginCount(60)
+                        .recommendationCount(MIN_RECOMMENDATION_COUNT_TO_UPGRADE)
+                        .build(),
 
                 User.builder()
-                    .id("green")
-                    .name("오민규")
-                    .password("p5")
-                    .level(Level.GOLD)
-                    .loginCount(100)
-                    .recommendationCount(Integer.MAX_VALUE)
-                    .build()
-                );
+                        .id("green")
+                        .name("오민규")
+                        .password("p5")
+                        .level(Level.GOLD)
+                        .loginCount(100)
+                        .recommendationCount(Integer.MAX_VALUE)
+                        .build()
+        );
     }
 
     @Test
     public void bean() {
-        assertThat( userService, notNullValue());
+        assertThat(userService, notNullValue());
     }
 
 
@@ -125,8 +126,8 @@ public class UserServiceTest {
         User userWithLevelSelected = userDao.get(userWithLevel.getId());
         User userWithoutLevelSelected = userDao.get(userWithoutLevel.getId());
 
-        assertEquals( userWithLevel.getLevel(), userWithLevelSelected.getLevel() );
-        assertEquals( Level.BASIC, userWithoutLevelSelected.getLevel());
+        assertEquals(userWithLevel.getLevel(), userWithLevelSelected.getLevel());
+        assertEquals(Level.BASIC, userWithoutLevelSelected.getLevel());
     }
 
     @Test
@@ -138,11 +139,11 @@ public class UserServiceTest {
 
         userService.upgradeLevels();
 
-        checkLevelUpgraded( users.get(0), false );
-        checkLevelUpgraded( users.get(1), true );
-        checkLevelUpgraded( users.get(2), false );
-        checkLevelUpgraded( users.get(3), true );
-        checkLevelUpgraded( users.get(4), false );
+        checkLevelUpgraded(users.get(0), false);
+        checkLevelUpgraded(users.get(1), true);
+        checkLevelUpgraded(users.get(2), false);
+        checkLevelUpgraded(users.get(3), true);
+        checkLevelUpgraded(users.get(4), false);
 
         checkMailReceivers(mockMailSender);
     }
@@ -157,19 +158,18 @@ public class UserServiceTest {
 
         User selectedUser = userDao.get(user.getId());
 
-        if( upgraded ) {
+        if (upgraded) {
             assertEquals(user.getLevel().nextLevel(), selectedUser.getLevel());
-        }
-        else {
+        } else {
             assertEquals(user.getLevel(), selectedUser.getLevel());
         }
     }
 
     private void checkMailReceivers(MockMailSender mockMailSender) {
         List<String> request = mockMailSender.getRequests();
-        assertEquals( request.size(), 2 );
-        assertEquals( request.get(0), users.get(1).getEmail());
-        assertEquals( request.get(1), users.get(3).getEmail());
+        assertEquals(request.size(), 2);
+        assertEquals(request.get(0), users.get(1).getEmail());
+        assertEquals(request.get(1), users.get(3).getEmail());
     }
 
     @Test
@@ -180,11 +180,11 @@ public class UserServiceTest {
         userService.setMailSender(mailSender);
         userService.upgradeLevels();
 
-        checkLevelUpgraded( users.get(0), false );
-        checkLevelUpgraded( users.get(1), true );
-        checkLevelUpgraded( users.get(2), false );
-        checkLevelUpgraded( users.get(3), true );
-        checkLevelUpgraded( users.get(4), false );
+        checkLevelUpgraded(users.get(0), false);
+        checkLevelUpgraded(users.get(1), true);
+        checkLevelUpgraded(users.get(2), false);
+        checkLevelUpgraded(users.get(3), true);
+        checkLevelUpgraded(users.get(4), false);
 
         checkMailSenderWithMockBean();
     }
@@ -195,8 +195,8 @@ public class UserServiceTest {
         verify(mailSender, times(2)).send(mailMessageArgumentCaptor.capture());
 
         List<SimpleMailMessage> mailMessages = mailMessageArgumentCaptor.getAllValues();
-        assertEquals( users.get(1).getEmail(), mailMessages.get(0).getTo()[0] );
-        assertEquals( users.get(3).getEmail(), mailMessages.get(1).getTo()[0] );
+        assertEquals(users.get(1).getEmail(), mailMessages.get(0).getTo()[0]);
+        assertEquals(users.get(3).getEmail(), mailMessages.get(1).getTo()[0]);
     }
 
     @Test
@@ -209,13 +209,53 @@ public class UserServiceTest {
 
         try {
             userServiceTx.upgradeLevels();
-           fail("TestUserServiceException expected");
-        }
-        catch (Exception e) {
+            fail("TestUserServiceException expected");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        checkLevelUpgraded( users.get(1), false );
+        checkLevelUpgraded(users.get(1), false);
+    }
+
+    private UserServiceTx getUserServiceTx() {
+        UserServiceTx userServiceTx = new UserServiceTx();
+        userServiceTx.setTransactionManager(transactionManager);
+        return userServiceTx;
+    }
+
+    @Test
+    public void upgradeAllOrNothingWithTransactionHandler() {
+
+        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
+        TransactionHandler transactionHandler = getTransactionHandler(testUserService);
+        UserService txUserService = getProxiedUserService(transactionHandler);
+
+        recreateUserList();
+
+        try {
+            txUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        checkLevelUpgraded(users.get(1), false);
+    }
+
+    private TransactionHandler getTransactionHandler(UserServiceImpl testUserService) {
+        TransactionHandler transactionHandler = new TransactionHandler();
+        transactionHandler.setTarget(testUserService);
+        transactionHandler.setTransactionManager(transactionManager);
+        transactionHandler.setPattern("upgradeLevels");
+        return transactionHandler;
+    }
+
+    private UserService getProxiedUserService(TransactionHandler transactionHandler) {
+        return (UserService) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class[]{UserService.class},
+                transactionHandler
+        );
     }
 
     private UserServiceImpl getTestUserService(String id) {
@@ -226,12 +266,6 @@ public class UserServiceTest {
         return testUserService;
     }
 
-    private UserServiceTx getUserServiceTx() {
-        UserServiceTx userServiceTx = new UserServiceTx();
-        userServiceTx.setTransactionManager(transactionManager);
-        return userServiceTx;
-    }
-
     private void recreateUserList() {
         userDao.deleteAll();
         userDao.addList(users);
@@ -239,6 +273,6 @@ public class UserServiceTest {
 
     @Test
     public void defaultTransactionManagerType() {
-        assertThat( transactionManager, IsInstanceOf.instanceOf(DataSourceTransactionManager.class));
+        assertThat(transactionManager, IsInstanceOf.instanceOf(DataSourceTransactionManager.class));
     }
 }
