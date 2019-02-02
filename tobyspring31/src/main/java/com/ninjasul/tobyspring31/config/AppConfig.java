@@ -36,14 +36,14 @@ public class AppConfig {
         return new MessageFactoryBean();
     }
 
-   /* @Bean(name="userService")
+    @Bean(name="userService")
     public TxProxyFactoryBean userService() {
         log.info("userService()");
         TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
-        txProxyFactoryBean.setTarget(applicationContext.getBean("userServiceImpl"));
+        txProxyFactoryBean.setTarget(applicationContext.getBean("userServiceTarget"));
         txProxyFactoryBean.setPattern("upgradeLevels");
         txProxyFactoryBean.setServiceInterface(UserService.class);
         txProxyFactoryBean.setTransactionManager((PlatformTransactionManager)applicationContext.getBean("transactionManager"));
         return txProxyFactoryBean;
-    }*/
+    }
 }

@@ -1,5 +1,6 @@
 package com.ninjasul.tobyspring31.user.service;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +16,16 @@ import java.lang.reflect.Proxy;
 /**
  * Transaction Handler를 Bean으로 등록하기 위해 FactoryBean을 구현
  */
-@Service
-@Qualifier("userService")
 @Setter
+@Getter
 public class TxProxyFactoryBean implements FactoryBean<Object> {
 
-    @Autowired
-    @Qualifier("userServiceTarget")
     Object target;
 
-    @Autowired
     PlatformTransactionManager transactionManager;
 
-    //@Autowired
-    @Value("upgradeLevels")
     String pattern;
 
-    //@Autowired
-    @Value("com.ninjasul.tobyspring31.user.service.UserService")
     Class<?> serviceInterface;
 
     @Override
