@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ninjasul.springframework</groupId>
-    <artifactId>applicationcontext</artifactId>
+    <artifactId>_02_applicationcontext_xml_bean_registration_with_component_scan</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>applicationcontext</name>
+    <name>_02_applicationcontext_xml_bean_registration_with_component_scan</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
