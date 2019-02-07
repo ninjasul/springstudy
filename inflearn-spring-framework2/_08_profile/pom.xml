@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ninjasul.springframework</groupId>
-    <artifactId>environment</artifactId>
+    <artifactId>_08_profile</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>environment</name>
+    <name>_08_profile</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
