@@ -10,7 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("app.properties")
+@PropertySource("classpath:app.properties")
 @Log4j2
 public class AppRunner implements ApplicationRunner {
 
