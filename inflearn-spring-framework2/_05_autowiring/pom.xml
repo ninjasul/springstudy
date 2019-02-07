@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ninjasul.springframework</groupId>
-    <artifactId>autowiring</artifactId>
+    <artifactId>_05_autowiring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>autowiring</name>
+    <name>_05_autowiring</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
