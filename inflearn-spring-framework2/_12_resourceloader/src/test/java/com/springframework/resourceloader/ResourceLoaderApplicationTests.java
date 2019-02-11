@@ -1,18 +1,26 @@
 package com.springframework.resourceloader;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.webresources.FileResource;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.ServletContextResource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -21,11 +29,11 @@ import static org.junit.Assert.*;
 public class ResourceLoaderApplicationTests {
 
     @Autowired
-    ResourceLoader resourceLoader;
+    ApplicationContext resourceLoader;
 
     @Test
-    public void resourceLoader() {
-        assertNotNull(resourceLoader);
+    public void readFile() {
+
 
         Resource resource = resourceLoader.getResource("classpath:test.txt");
         assertTrue(resource.exists());
@@ -46,5 +54,20 @@ public class ResourceLoaderApplicationTests {
         }
     }
 
+    @Test
+    public void resourceType() {
+        assertThat( resourceLoader, instanceOf(WebApplicationContext.class) );
+        log.info("ApplicationContextType: {}", resourceLoader.getClass());
+
+        checkResourceType("classpath:test.txt", ClassPathResource.class);
+        checkResourceType("file:test.txt", FileUrlResource.class);
+        checkResourceType("test.txt", ServletContextResource.class);
+    }
+
+    private void checkResourceType(String location, Class<? extends Resource> type) {
+        Resource resource = resourceLoader.getResource(location);
+        assertThat( resource, instanceOf(type));
+        log.info("ResourceType: {}", resource.getClass());
+    }
 }
 
