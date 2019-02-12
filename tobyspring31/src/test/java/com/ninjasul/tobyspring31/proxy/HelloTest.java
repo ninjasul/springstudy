@@ -4,6 +4,8 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.Test;
 import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 
 import java.lang.reflect.Proxy;
 
@@ -52,5 +54,23 @@ public class HelloTest {
         assertEquals("HELLO TOBY", proxiedHello.sayHello("Toby"));
         assertEquals("HI TOBY", proxiedHello.sayHi("Toby"));
         assertEquals("THANK YOU TOBY", proxiedHello.sayThankYou("Toby"));
+    }
+
+    @Test
+    public void pointcutAdvisor() {
+        ProxyFactoryBean pfBean = new ProxyFactoryBean();
+        pfBean.setTarget(new HelloTarget());
+
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("sayH*");
+
+        // pointcut + advice 쌍을 Advisor 로 묶어 추가할 수 있는 구조임.
+        pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+
+        Hello proxiedHello = (Hello)pfBean.getObject();
+
+        assertEquals("HELLO TOBY", proxiedHello.sayHello("Toby"));
+        assertEquals("HI TOBY", proxiedHello.sayHi("Toby"));
+        assertEquals("Thank You Toby", proxiedHello.sayThankYou("Toby"));
     }
 }
