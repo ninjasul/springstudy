@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -260,13 +261,38 @@ public class UserServiceTest {
                 transactionHandler
         );
     }
-
+/*
     @Test
     @DirtiesContext
     public void upgradeAllOrNothingWithProxiedFactoryBean() throws Exception {
 
         UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
         TxProxyFactoryBean txProxyFactoryBean = applicationContext.getBean("&userService", TxProxyFactoryBean.class );
+        txProxyFactoryBean.setTarget(testUserService);
+
+        UserService txUserService = (UserService)txProxyFactoryBean.getObject();
+
+        recreateUserList();
+
+        try {
+            txUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        checkLevelUpgraded(users.get(1), false);
+    }
+*/
+
+
+    @Test
+    @DirtiesContext
+    public void upgradeAllOrNothingWithAdvisor() throws Exception {
+
+        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
+
+        ProxyFactoryBean txProxyFactoryBean = applicationContext.getBean("&userService", ProxyFactoryBean.class);
         txProxyFactoryBean.setTarget(testUserService);
 
         UserService txUserService = (UserService)txProxyFactoryBean.getObject();
