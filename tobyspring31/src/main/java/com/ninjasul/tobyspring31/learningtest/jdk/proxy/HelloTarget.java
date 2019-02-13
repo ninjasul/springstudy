@@ -1,4 +1,4 @@
-package com.ninjasul.tobyspring31.proxy;
+package com.ninjasul.tobyspring31.learningtest.jdk.proxy;
 
 public class HelloTarget implements Hello {
     @Override

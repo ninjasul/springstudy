@@ -4,27 +4,23 @@ import com.ninjasul.tobyspring31.user.dao.UserDao;
 import com.ninjasul.tobyspring31.user.domain.Level;
 import com.ninjasul.tobyspring31.user.domain.User;
 import com.ninjasul.tobyspring31.user.service.helpers.MockMailSender;
-import com.ninjasul.tobyspring31.user.service.helpers.TestUserService;
 import lombok.extern.log4j.Log4j2;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.lang.reflect.Proxy;
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,9 +38,11 @@ import static org.mockito.Mockito.verify;
 @Log4j2
 public class UserServiceTest {
 
-    @Autowired
-    @Qualifier("userServiceTarget")
-    private UserServiceImpl userService;
+    @Resource(name="userServiceImpl")
+    private UserServiceImpl userServiceImpl;
+
+    @Resource(name="testUserServiceImpl")
+    private TestUserServiceImpl testUserServiceImpl;
 
     @Autowired
     private UserDao userDao;
@@ -112,7 +110,7 @@ public class UserServiceTest {
 
     @Test
     public void bean() {
-        assertThat(userService, notNullValue());
+        assertThat(userServiceImpl, notNullValue());
     }
 
 
@@ -124,8 +122,8 @@ public class UserServiceTest {
         User userWithoutLevel = users.get(0);
         userWithoutLevel.setLevel(null);
 
-        userService.add(userWithLevel);
-        userService.add(userWithoutLevel);
+        userServiceImpl.add(userWithLevel);
+        userServiceImpl.add(userWithoutLevel);
 
         User userWithLevelSelected = userDao.get(userWithLevel.getId());
         User userWithoutLevelSelected = userDao.get(userWithoutLevel.getId());
@@ -141,7 +139,7 @@ public class UserServiceTest {
 
         MockMailSender mockMailSender = getMockMailSender();
 
-        userService.upgradeLevels();
+        userServiceImpl.upgradeLevels();
 
         checkLevelUpgraded(users.get(0), false);
         checkLevelUpgraded(users.get(1), true);
@@ -154,7 +152,7 @@ public class UserServiceTest {
 
     private MockMailSender getMockMailSender() {
         MockMailSender mockMailSender = new MockMailSender();
-        userService.setMailSender(mockMailSender);
+        userServiceImpl.setMailSender(mockMailSender);
         return mockMailSender;
     }
 
@@ -181,8 +179,8 @@ public class UserServiceTest {
 
         recreateUserList();
 
-        userService.setMailSender(mailSender);
-        userService.upgradeLevels();
+        userServiceImpl.setMailSender(mailSender);
+        userServiceImpl.upgradeLevels();
 
         checkLevelUpgraded(users.get(0), false);
         checkLevelUpgraded(users.get(1), true);
@@ -206,115 +204,16 @@ public class UserServiceTest {
     @Test
     public void upgradeAllOrNothing() {
 
-        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
-        UserServiceTx userServiceTx = getUserServiceTx();
-
         recreateUserList();
 
         try {
-            userServiceTx.upgradeLevels();
+            testUserServiceImpl.upgradeLevels();
             fail("TestUserServiceException expected");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         checkLevelUpgraded(users.get(1), false);
-    }
-
-    private UserServiceTx getUserServiceTx() {
-        UserServiceTx userServiceTx = new UserServiceTx();
-        userServiceTx.setTransactionManager(transactionManager);
-        return userServiceTx;
-    }
-
-    @Test
-    public void upgradeAllOrNothingWithTransactionHandler() {
-
-        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
-        TransactionHandler transactionHandler = getTransactionHandler(testUserService);
-        UserService txUserService = getProxiedUserService(transactionHandler);
-
-        recreateUserList();
-
-        try {
-            txUserService.upgradeLevels();
-            fail("TestUserServiceException expected");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        checkLevelUpgraded(users.get(1), false);
-    }
-
-    private TransactionHandler getTransactionHandler(UserServiceImpl testUserService) {
-        TransactionHandler transactionHandler = new TransactionHandler();
-        transactionHandler.setTarget(testUserService);
-        transactionHandler.setTransactionManager(transactionManager);
-        transactionHandler.setPattern("upgradeLevels");
-        return transactionHandler;
-    }
-
-    private UserService getProxiedUserService(TransactionHandler transactionHandler) {
-        return (UserService) Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class[]{UserService.class},
-                transactionHandler
-        );
-    }
-/*
-    @Test
-    @DirtiesContext
-    public void upgradeAllOrNothingWithProxiedFactoryBean() throws Exception {
-
-        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
-        TxProxyFactoryBean txProxyFactoryBean = applicationContext.getBean("&userService", TxProxyFactoryBean.class );
-        txProxyFactoryBean.setTarget(testUserService);
-
-        UserService txUserService = (UserService)txProxyFactoryBean.getObject();
-
-        recreateUserList();
-
-        try {
-            txUserService.upgradeLevels();
-            fail("TestUserServiceException expected");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        checkLevelUpgraded(users.get(1), false);
-    }
-*/
-
-
-    @Test
-    @DirtiesContext
-    public void upgradeAllOrNothingWithAdvisor() throws Exception {
-
-        UserServiceImpl testUserService = getTestUserService(users.get(3).getId());
-
-        ProxyFactoryBean txProxyFactoryBean = applicationContext.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
-
-        UserService txUserService = (UserService)txProxyFactoryBean.getObject();
-
-        recreateUserList();
-
-        try {
-            txUserService.upgradeLevels();
-            fail("TestUserServiceException expected");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        checkLevelUpgraded(users.get(1), false);
-    }
-
-    private UserServiceImpl getTestUserService(String id) {
-        UserServiceImpl testUserService = new TestUserService(id);
-        testUserService.setUserDao(userDao);
-        testUserService.setApplicationContext(applicationContext);
-        testUserService.setMailSender(mailSender);
-        return testUserService;
     }
 
     private void recreateUserList() {

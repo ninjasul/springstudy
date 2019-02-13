@@ -1,8 +1,9 @@
-package com.ninjasul.tobyspring31.proxy;
+package com.ninjasul.tobyspring31.learningtest.jdk.proxy;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
+import com.ninjasul.tobyspring31.learningtest.jdk.proxy.*;
 import org.junit.Test;
+import org.springframework.aop.ClassFilter;
+import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
@@ -72,5 +73,52 @@ public class HelloTest {
         assertEquals("HELLO TOBY", proxiedHello.sayHello("Toby"));
         assertEquals("HI TOBY", proxiedHello.sayHi("Toby"));
         assertEquals("Thank You Toby", proxiedHello.sayThankYou("Toby"));
+    }
+
+    @Test
+    public void classNamePointcutAdvisor() {
+        HelloNameMatchMethodPointcut classMethodPointcut = new HelloNameMatchMethodPointcut();
+        classMethodPointcut.setMappedName("sayH*");
+
+        checkAdviced(new HelloTarget(), classMethodPointcut, true);
+
+        class HelloWorld extends HelloTarget {};
+        checkAdviced(new HelloWorld(), classMethodPointcut, false);
+
+        class HelloToby extends HelloTarget {};
+        checkAdviced(new HelloToby(), classMethodPointcut, true);
+    }
+
+    private void checkAdviced(Object target, Pointcut pointcut, boolean adviced) {
+        ProxyFactoryBean pfBean = new ProxyFactoryBean();
+        pfBean.setTarget(target);
+        pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+
+        Hello proxiedHello = (Hello)pfBean.getObject();
+
+        if( adviced ) {
+            assertEquals("HELLO TOBY", proxiedHello.sayHello("Toby"));
+            assertEquals("HI TOBY", proxiedHello.sayHi("Toby"));
+            assertEquals("Thank You Toby", proxiedHello.sayThankYou("Toby"));
+        }
+        else {
+            assertEquals("Hello Toby", proxiedHello.sayHello("Toby"));
+            assertEquals("Hi Toby", proxiedHello.sayHi("Toby"));
+            assertEquals("Thank You Toby", proxiedHello.sayThankYou("Toby"));
+        }
+    }
+
+    static class HelloNameMatchMethodPointcut extends NameMatchMethodPointcut {
+
+        @Override
+        public ClassFilter getClassFilter() {
+            return new ClassFilter() {
+                @Override
+                public boolean matches(Class<?> clazz) {
+                    return clazz.getSimpleName().startsWith("HelloT");
+                }
+            };
+        }
+
     }
 }

@@ -1,15 +1,13 @@
-package com.ninjasul.tobyspring31.user.service.helpers;
+package com.ninjasul.tobyspring31.user.service;
 
 import com.ninjasul.tobyspring31.user.domain.User;
 import com.ninjasul.tobyspring31.user.service.UserServiceImpl;
+import org.springframework.stereotype.Service;
 
-public class TestUserService extends UserServiceImpl {
+@Service
+public class TestUserServiceImpl extends UserServiceImpl {
 
-    private String id;
-
-    public TestUserService(String id) {
-        this.id = id;
-    }
+    private String id = "madnite1";
 
     @Override
     public void upgradeLevel(User user) {

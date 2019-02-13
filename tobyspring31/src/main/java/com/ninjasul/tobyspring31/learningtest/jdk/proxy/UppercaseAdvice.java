@@ -1,4 +1,4 @@
-package com.ninjasul.tobyspring31.proxy;
+package com.ninjasul.tobyspring31.learningtest.jdk.proxy;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
