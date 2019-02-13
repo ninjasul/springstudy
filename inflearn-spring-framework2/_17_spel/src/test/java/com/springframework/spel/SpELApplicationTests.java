@@ -55,7 +55,7 @@ public class SpELApplicationTests {
         assertEquals( "hello", hello );
         assertEquals( "spring", spring );
         assertEquals(100, myValue);
-        assertTrue(isMyValueEqualTo100);
+        assertTrue( isMyValueEqualTo100 );
         assertEquals(9999, sampleData);
     }
 
