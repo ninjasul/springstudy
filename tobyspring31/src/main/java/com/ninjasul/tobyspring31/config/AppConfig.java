@@ -4,10 +4,8 @@ import com.ninjasul.tobyspring31.factorybean.Message;
 import com.ninjasul.tobyspring31.factorybean.MessageFactoryBean;
 import com.ninjasul.tobyspring31.learningtest.jdk.proxy.NameMatchClassMethodPointcut;
 import com.ninjasul.tobyspring31.user.dao.UserDao;
-import com.ninjasul.tobyspring31.user.service.TransactionAdvice;
-import com.ninjasul.tobyspring31.user.service.TxProxyFactoryBean;
-import com.ninjasul.tobyspring31.user.service.UserService;
-import com.ninjasul.tobyspring31.user.service.UserServiceImpl;
+import com.ninjasul.tobyspring31.user.dao.UserDaoJdbc;
+import com.ninjasul.tobyspring31.user.service.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.PointcutAdvisor;
@@ -21,9 +19,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
+@Component
 @Log4j2
 public class AppConfig {
 
@@ -41,15 +41,14 @@ public class AppConfig {
 
     @Bean(name="message")
     public MessageFactoryBean messageFactoryBean() {
-        log.info("messageFactoryBean()");
         return new MessageFactoryBean();
     }
 
-    @Bean(name="userService")
+    @Bean
     public UserService userService() {
         UserServiceImpl userService = new UserServiceImpl();
         userService.setUserDao((UserDao)applicationContext.getBean("userDao"));
-        userService.setMailSender(new JavaMailSenderImpl());
+        userService.setMailSender(new DummyMailSender());
         return userService;
     }
 
@@ -58,9 +57,8 @@ public class AppConfig {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
-    @Bean(name="transactionPointcut")
+    @Bean
     public Pointcut transactionPointcut() {
-        log.info("transactionPointcut()");
         NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
         pointcut.setMappedClassName("*ServiceImpl");
         pointcut.setMappedName("upgrade*");

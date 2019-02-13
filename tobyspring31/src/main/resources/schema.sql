@@ -5,4 +5,4 @@ CREATE TABLE USERS  (
     level INTEGER,
     logincount INTEGER,
     recommendationcount INTEGER
-  );
+);

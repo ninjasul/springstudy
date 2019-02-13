@@ -4,7 +4,7 @@ import com.ninjasul.tobyspring31.user.domain.User;
 import com.ninjasul.tobyspring31.user.service.UserServiceImpl;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("testUserService")
 public class TestUserServiceImpl extends UserServiceImpl {
 
     private String id = "madnite1";

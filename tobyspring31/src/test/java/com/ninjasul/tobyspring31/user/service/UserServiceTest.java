@@ -3,7 +3,6 @@ package com.ninjasul.tobyspring31.user.service;
 import com.ninjasul.tobyspring31.user.dao.UserDao;
 import com.ninjasul.tobyspring31.user.domain.Level;
 import com.ninjasul.tobyspring31.user.domain.User;
-import com.ninjasul.tobyspring31.user.service.helpers.MockMailSender;
 import lombok.extern.log4j.Log4j2;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
@@ -38,20 +37,20 @@ import static org.mockito.Mockito.verify;
 @Log4j2
 public class UserServiceTest {
 
-    @Resource(name="userServiceImpl")
-    private UserServiceImpl userServiceImpl;
+    @Autowired
+    private UserService userService;
 
-    @Resource(name="testUserServiceImpl")
-    private TestUserServiceImpl testUserServiceImpl;
+    @Resource(name="testUserService")
+    private UserService testUserService;
 
     @Autowired
     private UserDao userDao;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
-    private PlatformTransactionManager transactionManager;
+    private ApplicationContext applicationContext;
 
     @MockBean
     private MailSender mailSender;
@@ -110,7 +109,7 @@ public class UserServiceTest {
 
     @Test
     public void bean() {
-        assertThat(userServiceImpl, notNullValue());
+        assertThat(userService, notNullValue());
     }
 
 
@@ -122,8 +121,8 @@ public class UserServiceTest {
         User userWithoutLevel = users.get(0);
         userWithoutLevel.setLevel(null);
 
-        userServiceImpl.add(userWithLevel);
-        userServiceImpl.add(userWithoutLevel);
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
 
         User userWithLevelSelected = userDao.get(userWithLevel.getId());
         User userWithoutLevelSelected = userDao.get(userWithoutLevel.getId());
@@ -137,8 +136,7 @@ public class UserServiceTest {
 
         recreateUserList();
 
-        MockMailSender mockMailSender = getMockMailSender();
-
+        UserServiceImpl userServiceImpl = getUserServiceImpl(mailSender);
         userServiceImpl.upgradeLevels();
 
         checkLevelUpgraded(users.get(0), false);
@@ -147,13 +145,15 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(3), true);
         checkLevelUpgraded(users.get(4), false);
 
-        checkMailReceivers(mockMailSender);
+        checkMailReceivers();
     }
 
-    private MockMailSender getMockMailSender() {
-        MockMailSender mockMailSender = new MockMailSender();
-        userServiceImpl.setMailSender(mockMailSender);
-        return mockMailSender;
+    private UserServiceImpl getUserServiceImpl(MailSender mailSender) {
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+        userServiceImpl.setMailSender(mailSender);
+        userServiceImpl.setUserDao(userDao);
+        userServiceImpl.setApplicationContext(applicationContext);
+        return userServiceImpl;
     }
 
     private void checkLevelUpgraded(User user, boolean upgraded) {
@@ -167,31 +167,7 @@ public class UserServiceTest {
         }
     }
 
-    private void checkMailReceivers(MockMailSender mockMailSender) {
-        List<String> request = mockMailSender.getRequests();
-        assertEquals(request.size(), 2);
-        assertEquals(request.get(0), users.get(1).getEmail());
-        assertEquals(request.get(1), users.get(3).getEmail());
-    }
-
-    @Test
-    public void upgradeLevelsWithMockBean() throws Exception {
-
-        recreateUserList();
-
-        userServiceImpl.setMailSender(mailSender);
-        userServiceImpl.upgradeLevels();
-
-        checkLevelUpgraded(users.get(0), false);
-        checkLevelUpgraded(users.get(1), true);
-        checkLevelUpgraded(users.get(2), false);
-        checkLevelUpgraded(users.get(3), true);
-        checkLevelUpgraded(users.get(4), false);
-
-        checkMailSenderWithMockBean();
-    }
-
-    private void checkMailSenderWithMockBean() {
+    private void checkMailReceivers() {
         ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
 
         verify(mailSender, times(2)).send(mailMessageArgumentCaptor.capture());
@@ -207,7 +183,7 @@ public class UserServiceTest {
         recreateUserList();
 
         try {
-            testUserServiceImpl.upgradeLevels();
+            testUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         } catch (Exception e) {
             e.printStackTrace();

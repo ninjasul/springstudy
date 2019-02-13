@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 
-@Repository
+@Repository("userDao")
 public class UserDaoJdbc implements UserDao {
 
     @Autowired
