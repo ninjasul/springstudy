@@ -19,6 +19,8 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -217,4 +219,22 @@ public class UserServiceTest {
         testUserService.getAll();
     }
 */
+
+    @Test
+    public void transactionSync() {
+        userDao.deleteAll();
+        assertEquals( 0, userDao.getCount());
+
+        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+
+        userService.add(users.get(0));
+        userService.add(users.get(1));
+
+        assertEquals( 2, userDao.getCount() );
+
+        transactionManager.rollback(txStatus);
+
+        assertEquals( 0, userDao.getCount() );
+    }
 }
