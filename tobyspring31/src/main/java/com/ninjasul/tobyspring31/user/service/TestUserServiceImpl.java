@@ -9,13 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service("testUserService")
-@Transactional
 public class TestUserServiceImpl extends UserServiceImpl {
 
     private String id = "madnite1";
 
     @Override
-    @Transactional(readOnly = true)
     public List<User> getAll() {
         for( User user : super.getAll() ) {
             update(user);
