@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -42,7 +43,6 @@ public class UserServiceTest {
 
     @Resource(name="testUserService")
     private UserService testUserService;
-
 
     @Autowired
     private UserDao userDao;
@@ -208,4 +208,13 @@ public class UserServiceTest {
         //assertThat(testUserService, IsInstanceOf.instanceOf(TestUserServiceImpl.class));
         assertThat(testUserService, IsInstanceOf.instanceOf(java.lang.reflect.Proxy.class));
     }
+
+    /*
+    // H2 DB에서는 readonly=true 속성을 무시함.
+    @Test(expected= TransientDataAccessResourceException.class)
+    public void readOnlyTransactionAttribute() {
+        userDao.addList(users);
+        testUserService.getAll();
+    }
+*/
 }

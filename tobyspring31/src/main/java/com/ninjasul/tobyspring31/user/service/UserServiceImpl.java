@@ -7,16 +7,17 @@ import com.ninjasul.tobyspring31.user.policy.upgrade.UserLevelUpgradePolicy;
 import lombok.Setter;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Primary;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @Primary
 public class UserServiceImpl implements UserService {
 
@@ -38,6 +39,28 @@ public class UserServiceImpl implements UserService {
             user.setLevel(Level.BASIC);
         }
         userDao.add(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User get(String id) {
+        return userDao.get(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> getAll() {
+        return userDao.getAll();
+    }
+
+    @Override
+    public void deleteAll() {
+        userDao.deleteAll();
+    }
+
+    @Override
+    public void update(User user) {
+        userDao.update(user);
     }
 
     public void upgradeLevels() throws Exception {
