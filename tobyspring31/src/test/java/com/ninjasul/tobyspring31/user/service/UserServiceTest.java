@@ -17,9 +17,11 @@ import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
@@ -236,5 +238,16 @@ public class UserServiceTest {
         transactionManager.rollback(txStatus);
 
         assertEquals( 0, userDao.getCount() );
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void transactionSync2() {
+        userDao.deleteAll();
+        userService.add(users.get(0));
+        userService.add(users.get(1));
+
+        // 테스트가 끝나고 DB에 User 정보가 남아있는 것을 확인할 것
     }
 }
