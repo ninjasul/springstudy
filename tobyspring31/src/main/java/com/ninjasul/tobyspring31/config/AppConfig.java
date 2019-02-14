@@ -9,6 +9,7 @@ import com.ninjasul.tobyspring31.user.service.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.PointcutAdvisor;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
@@ -57,11 +58,18 @@ public class AppConfig {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
-    @Bean
+    /*@Bean
     public Pointcut transactionPointcut() {
         NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
         pointcut.setMappedClassName("*ServiceImpl");
         pointcut.setMappedName("upgrade*");
+        return pointcut;
+    }*/
+
+    @Bean
+    public Pointcut transactionPointcut() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
         return pointcut;
     }
 
@@ -72,6 +80,7 @@ public class AppConfig {
         advisor.setPointcut(transactionPointcut());
         return advisor;
     }
+
 
 
 }

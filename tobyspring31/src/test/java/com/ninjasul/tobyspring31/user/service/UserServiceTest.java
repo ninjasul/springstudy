@@ -43,6 +43,7 @@ public class UserServiceTest {
     @Resource(name="testUserService")
     private UserService testUserService;
 
+
     @Autowired
     private UserDao userDao;
 
@@ -200,5 +201,11 @@ public class UserServiceTest {
     @Test
     public void defaultTransactionManagerType() {
         assertThat(transactionManager, IsInstanceOf.instanceOf(DataSourceTransactionManager.class));
+    }
+
+    @Test
+    public void advisorAutoProxyType() {
+        //assertThat(testUserService, IsInstanceOf.instanceOf(TestUserServiceImpl.class));
+        assertThat(testUserService, IsInstanceOf.instanceOf(java.lang.reflect.Proxy.class));
     }
 }
