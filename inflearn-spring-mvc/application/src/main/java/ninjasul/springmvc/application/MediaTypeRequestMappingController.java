@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static ninjasul.springmvc.application.MediaTypeRequestMappingController.MEDIATYPE;
+
 @RestController
-@RequestMapping("mediatype")
+@RequestMapping(value=MEDIATYPE)
 public class MediaTypeRequestMappingController {
 
     public static final String MEDIATYPE = "/mediatype";
