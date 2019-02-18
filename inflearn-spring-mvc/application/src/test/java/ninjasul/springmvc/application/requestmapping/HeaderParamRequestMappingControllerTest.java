@@ -1,4 +1,4 @@
-package ninjasul.springmvc.application;
+package ninjasul.springmvc.application.requestmapping;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

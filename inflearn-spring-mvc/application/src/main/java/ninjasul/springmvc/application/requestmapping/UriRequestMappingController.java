@@ -1,4 +1,4 @@
-package ninjasul.springmvc.application;
+package ninjasul.springmvc.application.requestmapping;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

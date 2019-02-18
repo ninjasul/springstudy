@@ -1,11 +1,11 @@
-package ninjasul.springmvc.application;
+package ninjasul.springmvc.application.requestmapping;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static ninjasul.springmvc.application.MediaTypeRequestMappingController.MEDIATYPE;
+import static ninjasul.springmvc.application.requestmapping.MediaTypeRequestMappingController.MEDIATYPE;
 
 @RestController
 @RequestMapping(value=MEDIATYPE)

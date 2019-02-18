@@ -1,4 +1,4 @@
-package ninjasul.springmvc.application;
+package ninjasul.springmvc.application.requestmapping;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;

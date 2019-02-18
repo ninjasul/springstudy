@@ -1,4 +1,4 @@
-package ninjasul.springmvc.application;
+package ninjasul.springmvc.application.requestmapping;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static ninjasul.springmvc.application.UriRequestMappingController.*;
+import static ninjasul.springmvc.application.requestmapping.UriRequestMappingController.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
