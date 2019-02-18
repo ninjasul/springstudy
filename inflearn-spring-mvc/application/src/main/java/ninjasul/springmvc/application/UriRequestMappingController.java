@@ -18,7 +18,6 @@ public class UriRequestMappingController {
         return REQUEST_MAPPING_WITH_HELLO;
     }
 
-
     @GetMapping(value="/hello?")
     @ResponseBody
     public String helloWithQuestionMark() {
