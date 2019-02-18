@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-public class SampleController {
+public class UriRequestMappingController {
 
     public static final String REQUEST_MAPPING_WITH_HELLO = "RequestMapping with hello";
     public static final String REQUEST_MAPPING_WITH_A_QUESTION_MARK = "RequestMapping with a question mark";

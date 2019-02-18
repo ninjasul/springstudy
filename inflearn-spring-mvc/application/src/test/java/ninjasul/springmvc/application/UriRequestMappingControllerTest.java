@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static ninjasul.springmvc.application.SampleController.*;
+import static ninjasul.springmvc.application.UriRequestMappingController.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
-public class SampleControllerTest {
+public class UriRequestMappingControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -112,8 +112,6 @@ public class SampleControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(REQUEST_MAPPING_WITH_SUB_PATHS));
-
-
     }
 
     @Test
