@@ -1,4 +1,4 @@
-package ninjasul.springmvc.application.initbinder;
+package ninjasul.springmvc.application.handler.initbinder;
 
 import lombok.extern.log4j.Log4j2;
 import ninjasul.springmvc.application.Event;

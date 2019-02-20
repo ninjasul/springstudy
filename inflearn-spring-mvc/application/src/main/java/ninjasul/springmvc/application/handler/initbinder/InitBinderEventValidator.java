@@ -1,4 +1,4 @@
-package ninjasul.springmvc.application.initbinder;
+package ninjasul.springmvc.application.handler.initbinder;
 
 import ninjasul.springmvc.application.Event;
 import org.springframework.validation.Errors;
