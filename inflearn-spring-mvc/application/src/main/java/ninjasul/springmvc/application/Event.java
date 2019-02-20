@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
 @Data
@@ -14,6 +15,8 @@ import java.time.LocalDate;
 @Builder
 public class Event {
     private Integer id;
+
+    @NotEmpty
     private String name;
     private Integer limit;
 

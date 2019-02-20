@@ -13,9 +13,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value="/initbinder"
-
-)
+@RequestMapping(value="/initbinder")
 @Log4j2
 public class InitBinderController {
 
@@ -28,7 +26,7 @@ public class InitBinderController {
     @InitBinder("event")
     public void initBinder2(WebDataBinder webDataBinder) {
         log.info("initBinder2 invoked");
-        webDataBinder.setDisallowedFields("id", "name");
+        webDataBinder.setDisallowedFields("id");
         webDataBinder.addValidators(new InitBinderEventValidator());
     }
 
