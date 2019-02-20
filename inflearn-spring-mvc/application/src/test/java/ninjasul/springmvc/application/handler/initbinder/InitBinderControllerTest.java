@@ -1,6 +1,5 @@
-package ninjasul.springmvc.application.initbinder;
+package ninjasul.springmvc.application.handler.initbinder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ninjasul.springmvc.application.Event;
 import org.junit.Test;
 import org.junit.runner.RunWith;
