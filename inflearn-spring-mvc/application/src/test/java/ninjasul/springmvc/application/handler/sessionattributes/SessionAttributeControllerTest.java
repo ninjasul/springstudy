@@ -1,4 +1,4 @@
-package ninjasul.springmvc.application.handler.sessionattribute;
+package ninjasul.springmvc.application.handler.sessionattributes;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
