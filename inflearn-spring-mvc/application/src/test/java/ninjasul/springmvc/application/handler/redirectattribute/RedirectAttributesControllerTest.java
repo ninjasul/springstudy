@@ -73,4 +73,32 @@ public class RedirectAttributesControllerTest {
                 .andExpect(jsonPath("limit").value(event.getLimit()))
         ;
     }
+
+    @Test
+    public void test_setFlashAttributesAndRedirectToModel() throws Exception {
+
+        Event event = Event.builder()
+                .name("event")
+                .limit(100)
+                .build();
+
+        MvcResult mvcResult = mockMvc.perform(post("/redirectattributes/setFlashAttributes/toModel")
+                .param("name", event.getName())
+                .param("limit", event.getLimit().toString()))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/redirectattributes/redirected/withModel"))
+                .andExpect(flash().attribute("newEvent", event))
+                .andReturn()
+        ;
+
+        mockMvc.perform(get(mvcResult.getResponse().getRedirectedUrl())
+                .flashAttr("newEvent", event ))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").value(event.getName()))
+                .andExpect(jsonPath("limit").value(event.getLimit()))
+        ;
+    }
 }
+
