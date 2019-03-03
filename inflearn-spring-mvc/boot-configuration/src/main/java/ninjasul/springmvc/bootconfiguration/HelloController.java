@@ -17,4 +17,9 @@ public class HelloController {
     public String helloRequestParam(@RequestParam("name") Person person) {
         return "hello " + person.getName();
     }
+
+    @GetMapping("/helloRequestParamById")
+    public String helloRequestParamById(@RequestParam("id") Person person) {
+        return "hello " + person.getName();
+    }
 }

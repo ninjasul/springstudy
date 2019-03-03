@@ -23,6 +23,8 @@ public class HelloControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private PersonRepository personRepository;
 
     @Test
     public void helloPathVariable() throws Exception {
@@ -42,6 +44,21 @@ public class HelloControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("hello ninjasul"))
+        ;
+    }
+
+    @Test
+    public void helloRequestParamById() throws Exception {
+        Person person = new Person();
+        person.setName("ninjasul");
+
+        Person savedPerson = personRepository.save(person);
+
+        mockMvc.perform(get("/helloRequestParamById")
+                .param("id", savedPerson.getId().toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("hello " + savedPerson.getName()))
         ;
     }
 }
