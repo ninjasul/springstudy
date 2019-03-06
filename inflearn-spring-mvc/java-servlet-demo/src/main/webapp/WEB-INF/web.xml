@@ -4,7 +4,11 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
-  
+
+  <listener>
+    <listener-class>ninjasul.springmvc.MyListener</listener-class>
+  </listener>
+
   <servlet>
     <servlet-name>hello</servlet-name>
     <servlet-class>ninjasul.springmvc.HelloServlet</servlet-class>
