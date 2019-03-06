@@ -5,6 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 
 @Configuration
-@ComponentScan(basePackages = "ninjasul.springmvc", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class))
+@ComponentScan(basePackages = "ninjasul.springmvc")
 public class WebConfig {
 }
