@@ -36,10 +36,6 @@ public class HelloServlet extends HttpServlet {
         resp.getWriter().println("</html>");
     }
 
-    private String getName() {
-        return (String)getServletContext().getAttribute("name");
-    }
-
     @Override
     public void destroy() {
         log.info("destroy");
