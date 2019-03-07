@@ -18,9 +18,6 @@ public class UserDaoJdbc implements UserDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Value("INSERT INTO USERS( ID, NAME, PASSWORD, LEVEL, LOGINCOUNT, RECOMMENDATIONCOUNT ) VALUES ( ?, ?, ?, ?, ?, ?)")
-    private String sqlAdd;
-
     @Autowired
     private Map<String, String> sqlMap;
 
