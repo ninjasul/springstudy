@@ -26,7 +26,6 @@ import static org.junit.Assert.assertThat;
 public class UserDaoJdbcTest {
 
     @Autowired
-    @Qualifier("userDaoJdbc")
     private UserDao dao;
 
     @Autowired

@@ -3,18 +3,26 @@ package com.ninjasul.tobyspring31.user.dao;
 import com.ninjasul.tobyspring31.user.domain.Level;
 import com.ninjasul.tobyspring31.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 
 @Repository("userDao")
 public class UserDaoJdbc implements UserDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Value("INSERT INTO USERS( ID, NAME, PASSWORD, LEVEL, LOGINCOUNT, RECOMMENDATIONCOUNT ) VALUES ( ?, ?, ?, ?, ?, ?)")
+    private String sqlAdd;
+
+    @Autowired
+    private Map<String, String> sqlMap;
 
     private RowMapper<User> userMapper = (rs, rowNum) -> {
         User user = new User();
@@ -27,10 +35,12 @@ public class UserDaoJdbc implements UserDao {
         return user;
     };
 
+    public UserDaoJdbc() {
+    }
+
     @Override
     public void add(User user) {
-        jdbcTemplate.update("INSERT INTO USERS( ID, NAME, PASSWORD, LEVEL, LOGINCOUNT, RECOMMENDATIONCOUNT ) " +
-                        "           VALUES ( ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update(sqlMap.get("add"),
                                 user.getId(),
                                 user.getName(),
                                 user.getPassword(),
@@ -45,8 +55,7 @@ public class UserDaoJdbc implements UserDao {
     public void addList(List<User> users) {
 
         for( User user : users ) {
-            jdbcTemplate.update("INSERT INTO USERS( ID, NAME, PASSWORD, LEVEL, LOGINCOUNT, RECOMMENDATIONCOUNT ) " +
-                            "           VALUES ( ?, ?, ?, ?, ?, ?)",
+            jdbcTemplate.update(sqlMap.get("add"),
                     user.getId(),
                     user.getName(),
                     user.getPassword(),
@@ -59,7 +68,7 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update("UPDATE USERS SET NAME = ?, PASSWORD = ?, LEVEL = ?, LOGINCOUNT = ?, RECOMMENDATIONCOUNT = ? WHERE ID = ?",
+        jdbcTemplate.update(sqlMap.get("update"),
                 user.getName(),
                 user.getPassword(),
                 user.getLevel().intValue(),
@@ -72,7 +81,7 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public User get(String id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM USERS WHERE ID = ?",
+        return jdbcTemplate.queryForObject(sqlMap.get("get"),
                                             new Object[] { id },
                                             userMapper
                 );
@@ -80,16 +89,16 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void deleteAll() {
-        jdbcTemplate.update("DELETE FROM USERS");
+        jdbcTemplate.update(sqlMap.get("deleteAll"));
     }
 
     @Override
     public int getCount() {
-        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USERS", Integer.class);
+        return jdbcTemplate.queryForObject(sqlMap.get("getCount"), Integer.class);
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM USERS ORDER BY ID", userMapper);
+        return jdbcTemplate.query(sqlMap.get("getAll"), userMapper);
     }
 }
