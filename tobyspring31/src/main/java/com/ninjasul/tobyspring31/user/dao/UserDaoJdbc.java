@@ -2,13 +2,12 @@ package com.ninjasul.tobyspring31.user.dao;
 
 import com.ninjasul.tobyspring31.user.domain.Level;
 import com.ninjasul.tobyspring31.user.domain.User;
+import com.ninjasul.tobyspring31.user.sqlservice.SqlService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public class UserDaoJdbc implements UserDao {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private Map<String, String> sqlMap;
+    private SqlService sqlService;
 
     private RowMapper<User> userMapper = (rs, rowNum) -> {
         User user = new User();
@@ -37,7 +36,7 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void add(User user) {
-        jdbcTemplate.update(sqlMap.get("add"),
+        jdbcTemplate.update(sqlService.getSql("userAdd"),
                                 user.getId(),
                                 user.getName(),
                                 user.getPassword(),
@@ -52,7 +51,7 @@ public class UserDaoJdbc implements UserDao {
     public void addList(List<User> users) {
 
         for( User user : users ) {
-            jdbcTemplate.update(sqlMap.get("add"),
+            jdbcTemplate.update(sqlService.getSql("userAdd"),
                     user.getId(),
                     user.getName(),
                     user.getPassword(),
@@ -65,7 +64,7 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update(sqlMap.get("update"),
+        jdbcTemplate.update(sqlService.getSql("userUpdate"),
                 user.getName(),
                 user.getPassword(),
                 user.getLevel().intValue(),
@@ -78,7 +77,7 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public User get(String id) {
-        return jdbcTemplate.queryForObject(sqlMap.get("get"),
+        return jdbcTemplate.queryForObject(sqlService.getSql("userGet"),
                                             new Object[] { id },
                                             userMapper
                 );
@@ -86,16 +85,16 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void deleteAll() {
-        jdbcTemplate.update(sqlMap.get("deleteAll"));
+        jdbcTemplate.update(sqlService.getSql("userDeleteAll"));
     }
 
     @Override
     public int getCount() {
-        return jdbcTemplate.queryForObject(sqlMap.get("getCount"), Integer.class);
+        return jdbcTemplate.queryForObject(sqlService.getSql("userGetCount"), Integer.class);
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query(sqlMap.get("getAll"), userMapper);
+        return jdbcTemplate.query(sqlService.getSql("userGetAll"), userMapper);
     }
 }
