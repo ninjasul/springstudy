@@ -2,8 +2,12 @@ package com.ninjasul.tobyspring31.user.sqlservice;
 
 import com.ninjasul.tobyspring31.learningtest.jdk.jaxb.SqlType;
 import com.ninjasul.tobyspring31.learningtest.jdk.jaxb.Sqlmap;
+import com.ninjasul.tobyspring31.user.dao.UserDao;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +18,9 @@ import java.io.IOException;
 @Component
 public class OxmSqlReader implements SqlReader {
 
-    @Value("/sql/sqlmap.xml")
-    private String sqlmapFile;
+    @Setter
+    @Value("classpath:/sql/sqlmap.xml")
+    private Resource sqlmap;
 
     @Autowired
     private Unmarshaller unmarshaller;
@@ -23,7 +28,7 @@ public class OxmSqlReader implements SqlReader {
     @Override
     public void read(SqlRegistry sqlRegistry) {
         try {
-            Source source = new StreamSource( getClass().getResourceAsStream(sqlmapFile));
+            Source source = new StreamSource( sqlmap.getInputStream() );
             Sqlmap sqlmap = (Sqlmap)unmarshaller.unmarshal(source);
 
             for( SqlType sql : sqlmap.getSql() ) {
@@ -32,7 +37,7 @@ public class OxmSqlReader implements SqlReader {
 
         }
         catch (IOException e) {
-            throw new IllegalArgumentException(sqlmapFile + "을 가져올 수 없습니다.", e);
+            throw new IllegalArgumentException(sqlmap.getFilename() + "을 가져올 수 없습니다.", e);
         }
     }
 }
