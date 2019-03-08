@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@Primary
 @Log4j2
 public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
 
