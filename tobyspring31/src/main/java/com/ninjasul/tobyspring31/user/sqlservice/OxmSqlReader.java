@@ -2,11 +2,9 @@ package com.ninjasul.tobyspring31.user.sqlservice;
 
 import com.ninjasul.tobyspring31.learningtest.jdk.jaxb.SqlType;
 import com.ninjasul.tobyspring31.learningtest.jdk.jaxb.Sqlmap;
-import com.ninjasul.tobyspring31.user.dao.UserDao;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Component;
