@@ -3,9 +3,12 @@ package com.ninjasul.tobyspring31.user.sqlservice;
 import com.ninjasul.tobyspring31.learningtest.jdk.jaxb.SqlType;
 import com.ninjasul.tobyspring31.learningtest.jdk.jaxb.Sqlmap;
 import com.ninjasul.tobyspring31.user.dao.UserDao;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -19,13 +22,20 @@ public class XmlSqlService implements SqlService {
 
     private Map<String, String> sqlMap = new HashMap<>();
 
-    public XmlSqlService() {
+    @Setter
+    @Value("/sql/sqlmap.xml")
+    private String sqlmapFile;
+
+    public XmlSqlService() {}
+
+    @PostConstruct
+    public void loadSql() {
         String contextPath = Sqlmap.class.getPackage().getName();
 
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            InputStream is = UserDao.class.getResourceAsStream("/sql/sqlmap.xml");
+            InputStream is = UserDao.class.getResourceAsStream(sqlmapFile);
             Sqlmap sqlmap = (Sqlmap)unmarshaller.unmarshal(is);
 
             for( SqlType sql : sqlmap.getSql() ) {
