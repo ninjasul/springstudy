@@ -1,6 +1,7 @@
 package com.ninjasul.tobyspring31.config;
 
 import com.ninjasul.tobyspring31.factorybean.MessageFactoryBean;
+import com.ninjasul.tobyspring31.learningtest.jdk.jaxb.Sqlmap;
 import com.ninjasul.tobyspring31.user.dao.UserDao;
 import com.ninjasul.tobyspring31.user.service.DummyMailSender;
 import com.ninjasul.tobyspring31.user.service.UserService;
@@ -13,8 +14,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.xml.bind.Unmarshaller;
 
 @Configuration
 @Component
@@ -50,6 +54,13 @@ public class AppConfig {
     @Bean
     public DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
+    }
+
+    @Bean
+    public Jaxb2Marshaller unmarshaller() {
+        Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+        jaxb2Marshaller.setContextPath(Sqlmap.class.getPackage().getName());
+        return jaxb2Marshaller;
     }
 
 }
