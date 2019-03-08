@@ -1,22 +1,21 @@
 package com.ninjasul.tobyspring31.user.sqlservice;
 
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 @Service
-public class BaseSqlService implements SqlService {
+@Primary
+public class OxmSqlService implements SqlService {
+
+    @Resource(name="oxmSqlReader")
+    private SqlReader sqlReader;
 
     @Autowired
-    @Setter
-    protected SqlReader sqlReader;
-
-    @Autowired
-    @Setter
-    protected SqlRegistry sqlRegistry;
+    private SqlRegistry sqlRegistry;
 
     @PostConstruct
     public void loadSql() {
