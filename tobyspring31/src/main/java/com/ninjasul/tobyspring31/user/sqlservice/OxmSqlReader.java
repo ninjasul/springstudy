@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Component;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class OxmSqlReader implements SqlReader {
 
         }
         catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException(sqlmapFile + "을 가져올 수 없습니다.", e);
         }
     }
 }
