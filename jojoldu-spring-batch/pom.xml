@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ninjasul.springbatch</groupId>
-    <artifactId>simeplejob</artifactId>
+    <artifactId>simplejob</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>simeplejob</name>
+    <name>simplejob</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
