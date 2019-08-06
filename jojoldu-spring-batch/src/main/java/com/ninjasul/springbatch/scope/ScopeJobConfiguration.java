@@ -1,4 +1,4 @@
-package com.ninjasul.springbatch.simeplejob.job;
+package com.ninjasul.springbatch.scope;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

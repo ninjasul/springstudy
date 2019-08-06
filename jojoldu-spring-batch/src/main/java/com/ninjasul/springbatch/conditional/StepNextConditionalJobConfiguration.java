@@ -1,8 +1,7 @@
-package com.ninjasul.springbatch.simeplejob.job;
+package com.ninjasul.springbatch.conditional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;

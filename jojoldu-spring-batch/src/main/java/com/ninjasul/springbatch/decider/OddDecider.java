@@ -1,4 +1,4 @@
-package com.ninjasul.springbatch.simeplejob.job;
+package com.ninjasul.springbatch.decider;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;

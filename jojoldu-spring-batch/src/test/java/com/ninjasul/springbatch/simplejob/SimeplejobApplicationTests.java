@@ -1,4 +1,4 @@
-package com.ninjasul.springbatch.simeplejob;
+package com.ninjasul.springbatch.simplejob;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
