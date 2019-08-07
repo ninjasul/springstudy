@@ -1,4 +1,4 @@
-package com.ninjasul.springbatch.cursoritemreader.domain;
+package com.ninjasul.springbatch.reader.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
