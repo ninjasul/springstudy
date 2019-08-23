@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InflearnSpringJpa2Application {
+public class InflearnSpringJpaApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(InflearnSpringJpa2Application.class, args);
+        SpringApplication.run(InflearnSpringJpaApplication.class, args);
     }
 
 }

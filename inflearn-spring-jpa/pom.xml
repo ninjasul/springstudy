@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.inflearn.spring.jpa</groupId>
-    <artifactId>inflearn-spring-jpa2</artifactId>
+    <artifactId>inflearn-spring-jpa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>inflearn-spring-jpa2</name>
+    <name>inflearn-spring-jpa</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
