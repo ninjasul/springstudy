@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
-@Builder
 public class Member {
 
     @Id @GeneratedValue
@@ -24,12 +23,4 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
-
-    public Member(Long id, String name, String city, String street, String zipcode) {
-        this.id = id;
-        this.name = name;
-        this.city = city;
-        this.street = street;
-        this.zipcode = zipcode;
-    }
 }
