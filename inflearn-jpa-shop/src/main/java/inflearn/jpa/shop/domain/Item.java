@@ -2,6 +2,7 @@ package inflearn.jpa.shop.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.lang.reflect.Array;
@@ -10,15 +11,18 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
-public class Item {
-    @Id
-    private Long id;
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn
+public abstract class Item {
+    @Id @GeneratedValue
+    protected Long id;
 
-    private String name;
-    private int price;
-    private int stockQuantity;
+    protected String name;
+    protected int price;
+    protected int stockQuantity;
 
     @OneToMany(mappedBy = "item")
-    private List<ItemCategory> itemCategories = new ArrayList<>();
+    protected List<ItemCategory> itemCategories = new ArrayList<>();
 }
