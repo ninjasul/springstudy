@@ -1,6 +1,7 @@
 package inflearn.jpa.basic;
 
 import inflearn.jpa.basic.domain.Member;
+import inflearn.jpa.basic.util.JpaUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
@@ -11,22 +12,7 @@ import javax.persistence.Persistence;
 @Slf4j
 public class _01_HelloJPA {
     public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
-
-        EntityManager em = emf.createEntityManager();
-
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
-
-        try {
-            doTest(em);
-            tx.commit();
-        } catch(Exception e) {
-            tx.rollback();
-        } finally {
-            em.close();
-            emf.close();
-        }
+        JpaUtil.doTest(_01_HelloJPA::doTest);
     }
 
     private static void doTest(EntityManager em) {
