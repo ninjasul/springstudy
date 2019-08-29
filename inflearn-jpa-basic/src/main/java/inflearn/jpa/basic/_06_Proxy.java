@@ -15,7 +15,7 @@ public class _06_Proxy {
 
     private static void doTest(EntityManager em) {
         Member member = new Member();
-        member.setName("hello");
+        member.setUserName("hello");
 
         em.persist(member);
 

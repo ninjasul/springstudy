@@ -1,26 +1,47 @@
 package inflearn.jpa.basic.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 public class Member {
     @Id @GeneratedValue
     private Long id;
-    private String name;
+    private String userName;
 
-    public Member(Long id, String name) {
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
+
+    @Embedded
+    private Period workPeriod;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column=@Column(name = "HOME_CITY")),
+            @AttributeOverride(name = "street", column=@Column(name = "HOME_STREET")),
+            @AttributeOverride(name = "zipcode", column=@Column(name = "HOME_ZIPCODE"))
+    })
+    private Address homeAddress;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column=@Column(name = "OFFICE_CITY")),
+            @AttributeOverride(name = "street", column=@Column(name = "OFFICE_STREET")),
+            @AttributeOverride(name = "zipcode", column=@Column(name = "OFFICE_ZIPCODE"))
+    })
+    private Address officeAddress;
+
+    public Member(Long id, String userName) {
         this.id = id;
-        this.name = name;
+        this.userName = userName;
     }
 }

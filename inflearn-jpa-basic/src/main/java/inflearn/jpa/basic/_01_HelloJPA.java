@@ -16,10 +16,9 @@ public class _01_HelloJPA {
     }
 
     private static void doTest(EntityManager em) {
-        Member member = new Member().builder()
-                                    .id(1L)
-                                    .name("HelloA")
-                                    .build();
+        Member member = new Member();
+        member.setId(1L);
+        member.setUserName("HelloA");
 
         em.persist(member);
     }
