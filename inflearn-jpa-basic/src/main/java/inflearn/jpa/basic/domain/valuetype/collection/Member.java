@@ -1,12 +1,13 @@
-package inflearn.jpa.basic.domain;
+package inflearn.jpa.basic.domain.valuetype.collection;
 
-import inflearn.jpa.basic.domain.valuetype.collection.AddressEntity;
+import inflearn.jpa.basic.domain.Address;
+import inflearn.jpa.basic.domain.Period;
+import inflearn.jpa.basic.domain.Team;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,12 +59,9 @@ public class Member {
     @Column(name = "FOOD_NAME")
     private Set<String> favoriteFoods = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(
-            name = "ADDRESS",
-            joinColumns = @JoinColumn(name = "MEMBER_ID")
-    )
-    private List<Address> addressHistories = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name = "MEMBER_ID")
+    private List<AddressEntity> addressHistories = new ArrayList<>();
 
     public Member(Long id, String userName) {
         this.id = id;
