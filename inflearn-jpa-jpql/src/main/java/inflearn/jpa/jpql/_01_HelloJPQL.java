@@ -26,7 +26,5 @@ public class _01_HelloJPQL {
         for (Member curMember : resultList) {
             log.info("curMember: {}", curMember);
         }
-
-        em.persist(member);
     }
 }

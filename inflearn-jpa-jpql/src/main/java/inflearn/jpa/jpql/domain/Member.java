@@ -24,17 +24,22 @@ public class Member {
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
-    public Member(Long id, String userName, int age, Team team) {
+    @Enumerated(EnumType.STRING)
+    private MemberType type;
+
+    public Member(Long id, String userName, int age, Team team, MemberType type) {
         this.id = id;
         this.userName = userName;
         this.age = age;
         this.team = team;
+        this.type = type;
     }
 
-    public Member(String userName, int age, Team team) {
+    public Member(String userName, int age, Team team, MemberType type) {
         this.userName = userName;
         this.age = age;
         this.team = team;
+        this.type = type;
     }
 
     @Override

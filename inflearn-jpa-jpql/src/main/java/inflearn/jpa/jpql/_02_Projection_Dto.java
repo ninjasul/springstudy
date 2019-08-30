@@ -31,7 +31,5 @@ public class _02_Projection_Dto {
         for (MemberDto curMember : resultList) {
             log.info("curMember: {}", curMember.getUserName());
         }
-
-        em.persist(member);
     }
 }
