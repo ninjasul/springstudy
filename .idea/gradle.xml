@@ -4,6 +4,14 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/inflearn-jpa-web" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../gradle" />
+        <option name="gradleJvm" value="1.8" />
+        <option name="useAutoImport" value="true" />
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/spring-security-oauth2-demo" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../gradle" />
         <option name="modules">
