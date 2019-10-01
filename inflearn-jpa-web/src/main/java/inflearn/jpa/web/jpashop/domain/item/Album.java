@@ -1,4 +1,4 @@
-package inflearn.jpa.web.domain.item;
+package inflearn.jpa.web.jpashop.domain.item;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package inflearn.jpa.web.domain;
+package inflearn.jpa.web.jpashop.domain;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 @NoArgsConstructor
@@ -28,7 +29,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
-    @OneToOne
+    @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
@@ -52,5 +53,33 @@ public class Order {
         this.delivery = delivery;
         this.orderDate = orderDate;
         this.status = status;
+    }
+
+    public void setMember(Member member) {
+
+        member.getOrders().add(this);
+
+        this.member = new Member().builder()
+                            .name(member.getName())
+                            .address(member.getAddress())
+                            .orders(member.getOrders())
+                            .build();
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(new OrderItem().builder()
+                                .item(orderItem.getItem())
+                                .order(this)
+                                .orderPrice(orderItem.getOrderPrice())
+                                .count(orderItem.getCount())
+                                .build());
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = new Delivery().builder()
+                                .order(this)
+                                .address(delivery.getAddress())
+                                .status(delivery.getStatus())
+                                .build();
     }
 }

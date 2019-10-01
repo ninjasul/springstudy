@@ -1,4 +1,4 @@
-package inflearn.jpa.web.domain;
+package inflearn.jpa.web.jpashop.domain;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +18,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column(unique = true)
     private String name;
 
     @Embedded
@@ -38,4 +39,6 @@ public class Member {
         this.address = address;
         this.orders = orders;
     }
+
+
 }

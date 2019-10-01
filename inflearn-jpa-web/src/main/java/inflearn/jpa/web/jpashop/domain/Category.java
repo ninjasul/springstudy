@@ -1,6 +1,7 @@
-package inflearn.jpa.web.domain;
+package inflearn.jpa.web.jpashop.domain;
 
-import inflearn.jpa.web.domain.item.Item;
+import inflearn.jpa.web.jpashop.domain.item.Item;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,8 +9,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @NoArgsConstructor
 @Getter
+@Builder
 @Entity
 public class Category {
     @Id @GeneratedValue
@@ -25,7 +29,7 @@ public class Category {
     )
     private List<Item> items = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
@@ -45,5 +49,16 @@ public class Category {
         this.items = items;
         this.parent = parent;
         this.child = child;
+    }
+
+    public void addChildCategory(Category child) {
+        this.child.add(
+                new Category().builder()
+                    .name(child.getName())
+                    .items(child.getItems())
+                    .parent(this)
+                    .child(child.getChild())
+                    .build()
+        );
     }
 }

@@ -1,6 +1,6 @@
-package inflearn.jpa.web.domain.item;
+package inflearn.jpa.web.jpashop.domain.item;
 
-import inflearn.jpa.web.domain.Category;
+import inflearn.jpa.web.jpashop.domain.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
