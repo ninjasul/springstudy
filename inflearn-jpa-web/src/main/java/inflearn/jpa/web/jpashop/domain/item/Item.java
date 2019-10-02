@@ -18,13 +18,13 @@ public abstract class Item {
 
     @Id @GeneratedValue
     @Column(name = "item_id")
-    private Long id;
+    protected Long id;
 
-    private String name;
+    protected String name;
 
-    private int price;
+    protected int price;
 
-    private int stockQuantity;
+    protected int stockQuantity;
 
     @ManyToMany
     private List<Category> categories = new ArrayList<>();

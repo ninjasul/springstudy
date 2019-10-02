@@ -25,6 +25,7 @@ public class Member {
     private Address address;
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private List<Order> orders = new ArrayList<>();
 
     public Member(Long id, String name, Address address, List<Order> orders) {

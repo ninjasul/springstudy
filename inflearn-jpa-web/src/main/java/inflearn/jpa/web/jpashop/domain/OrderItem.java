@@ -4,7 +4,6 @@ import inflearn.jpa.web.jpashop.domain.item.Item;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -44,5 +43,23 @@ public class OrderItem {
         this.order = order;
         this.orderPrice = orderPrice;
         this.count = count;
+    }
+
+    public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
+        item.reduceStockQuantity(count);
+
+        return new OrderItem().builder()
+                            .item(item)
+                            .orderPrice(orderPrice)
+                            .count(count)
+                            .build();
+    }
+
+    public void cancel() {
+        getItem().addStockQuantity(count);
+    }
+
+    public int getTotalPrice() {
+        return getOrderPrice() * getCount();
     }
 }

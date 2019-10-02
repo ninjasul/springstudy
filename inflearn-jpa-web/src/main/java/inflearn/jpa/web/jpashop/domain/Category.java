@@ -27,6 +27,7 @@ public class Category {
         joinColumns = @JoinColumn(name = "category_id"),
         inverseJoinColumns = @JoinColumn(name = "item_id")
     )
+    @Builder.Default
     private List<Item> items = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
@@ -34,6 +35,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
+    @Builder.Default
     private List<Category> child = new ArrayList<>();
 
     public Category(Long id, String name, List<Item> items, Category parent, List<Category> child) {
