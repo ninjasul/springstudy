@@ -97,4 +97,12 @@ public class Book extends Item {
                         .isbn(form.getIsbn())
                         .build();
     }
+
+    public void update(Book updated) {
+        name = updated.name;
+        price = updated.price;
+        stockQuantity = updated.stockQuantity;
+        author = updated.author;
+        isbn = updated.isbn;
+    }
 }

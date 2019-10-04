@@ -49,6 +49,7 @@ public class ItemController {
 
     @PostMapping("/items/{itemId}/edit")
     public String updateItem(@ModelAttribute BookForm form) {
+
         Book book = Book.of(form);
         itemService.saveItem(book);
         return "redirect:/items";
