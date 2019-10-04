@@ -1,14 +1,12 @@
 package inflearn.jpa.web.jpashop.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @Embeddable
 public class Address {
