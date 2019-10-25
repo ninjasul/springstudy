@@ -3,14 +3,15 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 @Slf4j
-public class IntSubscriber implements Subscriber<Integer> {
+public class LogSubscriber<T> implements Subscriber<T> {
     public void onSubscribe(Subscription subscription) { 
         log.debug("{} - onSubscribe", Thread.currentThread().getName());
         subscription.request(Long.MAX_VALUE);
     }
 
-    public void onNext(Integer i) {
-        log.debug("{} - onNext: {}", Thread.currentThread().getName(), i);
+    @Override
+    public void onNext(T t) {
+        log.debug("{} - onNext: {}", Thread.currentThread().getName(), t);
     }
 
     public void onError(Throwable throwable) {

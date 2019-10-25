@@ -2,13 +2,14 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+public class IntPublisher<T> implements Publisher<T> {
+    private Iterable<T> iterable;
 
-public class IntPublisher implements Publisher<Integer> {
-    Iterable<Integer> iterable = Stream.iterate(1, a -> a + 1).limit(10).collect(Collectors.toList());
+    public IntPublisher(Iterable<T> iterable) {
+        this.iterable = iterable;
+    }
 
-    public void subscribe(Subscriber<? super Integer> subscriber) {
+    public void subscribe(Subscriber subscriber) {
         subscriber.onSubscribe(new Subscription() {
             @Override
             public void request(long l) {
