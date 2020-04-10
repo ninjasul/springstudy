@@ -1,13 +1,13 @@
-package com.ninjasul.corespringsecurity;
+package com.ninjasul.core_spring_security;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InflearnCoreSpringSecurityApplication {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(InflearnCoreSpringSecurityApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
 }
