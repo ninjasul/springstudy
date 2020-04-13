@@ -6,13 +6,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Configuration
@@ -25,7 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             .anyRequest().authenticated();
 
-        http.formLogin()
+
+        http.formLogin();
+        /*http.formLogin()
             //.loginPage("/loginPage")
             .defaultSuccessUrl("/")
             .failureUrl("/login")
@@ -40,6 +42,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 log.info("exception: {}", exception.getMessage());
                 response.sendRedirect("/login");
             })
-            .permitAll();   // /loginPage 자체는 인증을 받지 않아도 되게 끔 설정.
+            .permitAll();   // /loginPage 자체는 인증을 받지 않아도 되게 끔 설정.*/
+
+
+        http.logout()
+            .logoutUrl("/doLogout")
+            .logoutSuccessUrl("/login")
+            .addLogoutHandler((request, response, authentication) -> {
+                HttpSession session = request.getSession();
+                session.invalidate();
+            })
+            .logoutSuccessHandler((request, response, authentication) -> {
+                response.sendRedirect("/login");
+            })
+            .deleteCookies("remember-me");
+
     }
 }
